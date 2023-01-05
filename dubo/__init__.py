@@ -1,6 +1,6 @@
-from .ask_dubo import ask_dubo
+from .ask_dubo import ask
 from .config import DOCS_URL, FEEDBACK_URL
 
-MSG = f"Examples: {DOCS_URL}. Feedback? {FEEDBACK_URL}. Privacy policy: https://mercator.tech/privacy"
+MSG = f"Dubo | Examples: {DOCS_URL} | Feedback? {FEEDBACK_URL} | Privacy policy: https://mercator.tech/privacy"
 
 print(MSG)

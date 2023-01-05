@@ -21,7 +21,7 @@ def _open_url(url: str, params: dict | None = None):
 class DuboException(Exception):
     pass
 
-def ask_dubo(query: str, data: pd.DataFrame, verbose: bool = False):
+def ask(query: str, data: pd.DataFrame, verbose: bool = False):
     """
     Ask Dubo a question about your data.
 
@@ -32,10 +32,10 @@ def ask_dubo(query: str, data: pd.DataFrame, verbose: bool = False):
     # Example
     ```python
     import pandas as pd
-    from dubo import ask_dubo
+    from dubo import ask
 
     df = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
-    ask_dubo('What is the sum of a?', df)
+    ask('What is the sum of a?', df)
     > [(6,)]
     ```
     :return The result of the query.
