@@ -1,4 +1,5 @@
 import sqlite3
+import urllib.parse
 
 import pandas as pd
 
@@ -7,7 +8,8 @@ from dubo.config import query_endpoint, api_key
 
 def _open_url(url: str, params: dict | None = None):
     if params:
-        url += '?' + '&'.join([f'{k}={v}' for k, v in params.items()])
+        url += '?' + '&'.join([f'{k}={urllib.parse.quote_plus(v)}' for k, v in params.items() if v is not None])
+        print(url)
     try:
         # Treat pyodide as a special case
         from pyodide.http import open_url as pyodide_open_url  # type: ignore
