@@ -1,3 +1,5 @@
+import json
+
 import sqlite3
 import urllib.parse
 
@@ -9,15 +11,14 @@ from dubo.config import query_endpoint, api_key
 def _open_url(url: str, params: dict | None = None):
     if params:
         url += '?' + '&'.join([f'{k}={urllib.parse.quote_plus(v)}' for k, v in params.items() if v is not None])
-        print(url)
     try:
         # Treat pyodide as a special case
         from pyodide.http import open_url as pyodide_open_url  # type: ignore
-        return pyodide_open_url(url)
+        return json.loads(pyodide_open_url(url).read())
     except ImportError:
         from urllib.request import urlopen as urlib_open_url
         # Use as a POST
-        return urlib_open_url(url)
+        return json.loads(urlib_open_url(url).read())
 
 
 class DuboException(Exception):
@@ -58,6 +59,6 @@ def ask(query: str, data: pd.DataFrame, verbose: bool = False):
     except KeyError:
         raise Exception("Unable to produce a result for the query: %s" % query)
     try:
-        return conn.execute(possible_query).fetchall()
+        return conn.execute(result).fetchall()
     except Exception as e:
         raise DuboException(e)
