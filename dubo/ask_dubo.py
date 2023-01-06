@@ -24,7 +24,7 @@ def _open_url(url: str, params: dict | None = None):
 class DuboException(Exception):
     pass
 
-def ask(query: str, data: pd.DataFrame, verbose: bool = False):
+def ask(query: str, data: pd.DataFrame, verbose: bool = False) -> pd.DataFrame:
     """
     Ask Dubo a question about your data.
 
@@ -59,6 +59,6 @@ def ask(query: str, data: pd.DataFrame, verbose: bool = False):
     except KeyError:
         raise Exception("Unable to produce a result for the query: %s" % query)
     try:
-        return conn.execute(result).fetchall()
+        return pd.read_sql(result, conn)
     except Exception as e:
         raise DuboException(e)

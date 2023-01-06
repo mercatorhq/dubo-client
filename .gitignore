@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 _output/*
 .jupyterlite.doit.db
+ignore__*
