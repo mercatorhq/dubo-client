@@ -161,3 +161,6 @@ cython_debug/
 _output/*
 .jupyterlite.doit.db
 ignore__*
+.*.swp
+.*.swo
+.*.swn
