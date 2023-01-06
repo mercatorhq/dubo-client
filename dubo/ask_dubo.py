@@ -24,6 +24,7 @@ def _open_url(url: str, params: dict | None = None):
 class DuboException(Exception):
     pass
 
+
 def ask(query: str, data: pd.DataFrame, verbose: bool = False) -> pd.DataFrame:
     """
     Ask Dubo a question about your data.

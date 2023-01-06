@@ -4,7 +4,7 @@ import os
 
 from dubo import __version__
 
-API_URL = "https://dubo-api.fly.dev/v1/dubo/query"
+API_URL = "hhttps://dubo-api.mercator.tech/"
 FEEDBACK_URL = "https://forms.gle/KvPm6niv9oUGRZhh8"
 DOCS_URL = "https://dubo.mercator.tech/"
 
