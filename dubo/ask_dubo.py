@@ -12,7 +12,18 @@ from dubo.config import query_endpoint, api_key
 def _open_url(url: str, params: dict | None = None):
     if params:
         # URL-encode a dict into a query string and append it to the URL
-        url += "?" + urllib.parse.urlencode(params)
+        # if the value is a list, then create multiple entries for the same key
+        url_parts = ""
+        for k, v in params.items():
+            if v is None:
+                continue
+            if isinstance(v, list):
+                for item in v:
+                    url_parts += f"{k}={urllib.parse.quote(str(item))}&"
+            else:
+                url_parts += f"{k}={urllib.parse.quote(str(v))}&"
+        url += "?" + url_parts[:-1]
+    import pytest; pytest.set_trace()
     try:
         # Treat pyodide as a special case
         from pyodide.http import open_url as pyodide_open_url  # type: ignore
@@ -61,7 +72,7 @@ def ask(
         data = [data]
     if not all([isinstance(d, pd.DataFrame) for d in data]):
         raise TypeError(
-            "Input for data must be a pandas DataFrame but saw type: %s" % type(data)
+            "Input for data must be a pandas.DataFrame but saw type: %s" % type(data)
         )
     schemas = []
     for i, dset in enumerate(data):
@@ -74,7 +85,7 @@ def ask(
     possible_query = _open_url(
         query_endpoint,
         params={
-            "query": query,
+            "user_query": query,
             "schemas": schemas,
             "api_key": api_key,
             "descriptions": column_descriptions,
