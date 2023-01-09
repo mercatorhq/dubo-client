@@ -1,7 +1,7 @@
 import json
 
 import sqlite3
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type
 import urllib.parse
 
 import pandas as pd
@@ -23,7 +23,6 @@ def _open_url(url: str, params: dict | None = None):
             else:
                 url_parts += f"{k}={urllib.parse.quote(str(v))}&"
         url += "?" + url_parts[:-1]
-    import pytest; pytest.set_trace()
     try:
         # Treat pyodide as a special case
         from pyodide.http import open_url as pyodide_open_url  # type: ignore
@@ -44,8 +43,9 @@ def ask(
     query: str,
     data: List[pd.DataFrame] | pd.DataFrame,
     verbose: bool = True,
+    rtype: Type = pd.DataFrame,
     column_descriptions: Optional[Dict[str, str]] = None,
-) -> pd.DataFrame:
+) -> pd.DataFrame | List:
     """
     Ask Dubo a question about your data.
 
@@ -76,7 +76,7 @@ def ask(
         )
     schemas = []
     for i, dset in enumerate(data):
-        tbl_name = f"df{i}"
+        tbl_name = f"tbl_{i}"
         dset.infer_objects().to_sql(tbl_name, conn, index=False)
         schema = conn.execute(
             f"SELECT sql FROM sqlite_schema WHERE name = '{tbl_name}'"
@@ -98,6 +98,13 @@ def ask(
     except KeyError:
         raise DuboException("Unable to produce a result for the query: %s" % query)
     try:
-        return pd.read_sql(result, conn)
+        if rtype == pd.DataFrame:
+            return pd.read_sql(result, conn)
+        elif rtype == list:
+            return conn.execute(result).fetchall()
+        else:
+            raise TypeError(
+                "rtype must be either pd.DataFrame or list but saw type: %s" % rtype
+            )
     except Exception as e:
         raise DuboException(e)

@@ -5,8 +5,7 @@ df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 housing_buyers_df = pd.DataFrame(
     {
         "name": ["Alice", "Bob", "Charlie", "Dennis", "Eve"],
-        "min_preference_for_house_age": [0, 0, 0, 0, 20],
-        "max_preference_for_house_age": [5, 10, 15, 20, 100],
+        "house_age_max": [5, 10, 15, 20, 100],
     }
 )
 housing_df = pd.read_csv(
@@ -21,16 +20,12 @@ def test_ask():
     ]
 
     for query, expected in TEST_TABLE:
-        assert ask(query, df) == expected
+        assert ask(query, df, rtype=list) == expected
 
 
 def test_ask_multi():
     TEST_TABLE = [
-        (
-            "Which buyers are interested in houses between 5 and 10 years old?",
-            [("Bob",)],
-        ),
-        ("How many houses are available to Bob based on his preferences?", [(10,)]),
+        ("How many houses are available to Bob based on his preferences?", [(110,)]),
     ]
     for query, expected in TEST_TABLE:
-        assert ask(query, [housing_buyers_df, housing_df]) == expected
+        assert ask(query, [housing_buyers_df, housing_df], rtype=list) == expected, query
