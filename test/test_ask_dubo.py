@@ -1,5 +1,5 @@
 import pandas as pd
-from dubo import ask
+from dubo import ask, chart
 
 df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 housing_buyers_df = pd.DataFrame(
@@ -28,4 +28,17 @@ def test_ask_multi():
         ("How many houses are available to Bob based on his preferences?", [(110,)]),
     ]
     for query, expected in TEST_TABLE:
-        assert ask(query, [housing_buyers_df, housing_df], rtype=list) == expected, query
+        assert (
+            ask(query, [housing_buyers_df, housing_df], rtype=list) == expected
+        ), query
+
+
+def test_chart():
+    assert chart("Map the houses", housing_df) == "Map the houses"
+    assert (
+        chart(
+            "What's the relationship between price and MRT distance?",
+            housing_df,
+        )
+        == "Map the houses"
+    )
