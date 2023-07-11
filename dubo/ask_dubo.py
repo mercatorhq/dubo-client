@@ -141,6 +141,7 @@ def chart(
     query: str,
     df: pd.DataFrame,
     specify_chart_type: str | None = None,
+    verbose=False,
     **kwargs,
 ):
     chart_type: str | None = specify_chart_type
@@ -153,6 +154,9 @@ def chart(
         )
     if chart_type not in ("VEGA_LITE", "DECK_GL"):
         raise ValueError("Chart type must be one of: VEGA_LITE, DECK_GL")
+
+    if verbose:
+        print("Generating a chart of type:", chart_type)
 
     charts = http_POST(
         CHART_API_URL,
@@ -176,7 +180,7 @@ def chart(
         chart = charts[0]
         for layer in chart["layers"]:
             if "data" in layer:
-                layer["data"] = {"values": df.to_dict(orient="records")}
-        return deck_to_html(charts[0], as_string=True, **kwargs)
+                layer["data"] = df.to_dict(orient="records")
+        return deck_to_html(json.dumps(chart), **kwargs)
 
     raise ValueError(f"Unknown chart type: {chart_type}")
