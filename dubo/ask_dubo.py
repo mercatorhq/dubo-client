@@ -5,24 +5,35 @@ from typing import Dict, List, Optional, Type
 import urllib.parse
 
 import pandas as pd
+import altair as alt
+from pydeck.io.html import deck_to_html
 
-from dubo.config import query_endpoint, api_key
+from dubo.config import (
+    CATEGORIZE_CHART_API_URL,
+    CHART_API_URL,
+    query_endpoint,
+    api_key,
+)  # noqa: E402
 
 
-def _open_url(url: str, params: dict | None = None):
+def _encode_params(params: dict) -> str:
+    # URL-encode a dict into a query string and append it to the URL
+    # if the value is a list, then create multiple entries for the same key
+    url_parts = ""
+    for k, v in params.items():
+        if v is None:
+            continue
+        if isinstance(v, list):
+            for item in v:
+                url_parts += f"{k}={urllib.parse.quote(str(item))}&"
+        else:
+            url_parts += f"{k}={urllib.parse.quote(str(v))}&"
+    return url_parts[:-1]
+
+
+def http_GET(url: str, params: dict | None = None):
     if params:
-        # URL-encode a dict into a query string and append it to the URL
-        # if the value is a list, then create multiple entries for the same key
-        url_parts = ""
-        for k, v in params.items():
-            if v is None:
-                continue
-            if isinstance(v, list):
-                for item in v:
-                    url_parts += f"{k}={urllib.parse.quote(str(item))}&"
-            else:
-                url_parts += f"{k}={urllib.parse.quote(str(v))}&"
-        url += "?" + url_parts[:-1]
+        url += "?" + _encode_params(params)
     try:
         # Treat pyodide as a special case
         from pyodide.http import open_url as pyodide_open_url  # type: ignore
@@ -33,6 +44,27 @@ def _open_url(url: str, params: dict | None = None):
 
         # Use as a POST
         return json.loads(urlib_open_url(url).read())
+
+
+def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
+    if params:
+        url += "?" + _encode_params(params)
+    try:
+        from js import XMLHttpRequest, Blob  # type: ignore
+
+        req = XMLHttpRequest.new()
+        req.open("POST", url, False)
+        blob = Blob.new([json.dumps(body)], {type: "application/json"})
+        req.send(blob)
+        return json.loads(req.responseText)
+    except ImportError:
+        from urllib.request import Request, urlopen
+
+        req = Request(url, data=json.dumps(body).encode("utf-8"), method="POST")
+        req.add_header("Content-Type", "application/json")
+        req.add_header("x-dubo-lib", "python")
+        res = urlopen(req).read()
+        return json.loads(res)
 
 
 class DuboException(Exception):
@@ -82,7 +114,7 @@ def ask(
             f"SELECT sql FROM sqlite_schema WHERE name = '{tbl_name}'"
         ).fetchone()
         schemas.append(schema[0])
-    possible_query = _open_url(
+    possible_query = http_GET(
         query_endpoint,
         params={
             "user_query": query,
@@ -96,7 +128,7 @@ def ask(
         if verbose:
             print(result)
     except KeyError:
-        raise DuboException("Unable to produce a result for the query: %s" % query)
+        raise DuboException(f"Unable to produce a result for the query: {query}")
     try:
         if rtype == pd.DataFrame:
             return pd.read_sql(result, conn)
@@ -104,7 +136,53 @@ def ask(
             return conn.execute(result).fetchall()
         else:
             raise TypeError(
-                "rtype must be either pd.DataFrame or list but saw type: %s" % rtype
+                f"rtype must be either pd.DataFrame or list but saw type: {rtype}"
             )
     except Exception as e:
         raise DuboException(e)
+
+
+def chart(
+    query: str,
+    df: pd.DataFrame,
+    specify_chart_type: str | None = None,
+    verbose=False,
+    **kwargs,
+):
+    chart_type: str | None = specify_chart_type
+    if not chart_type:
+        chart_type = http_GET(
+            CATEGORIZE_CHART_API_URL,
+            params={
+                "text_input": query,
+            },
+        )
+    if chart_type not in ("VEGA_LITE", "DECK_GL"):
+        raise ValueError("Chart type must be one of: VEGA_LITE, DECK_GL")
+
+    if verbose:
+        print("Generating a chart of type:", chart_type)
+
+    charts = http_POST(
+        CHART_API_URL,
+        body={
+            "user_query": query,
+            "data_snippet": df.head().to_dict(orient="records"),
+            "fast": False,
+            "chart_type": chart_type.lower(),
+        },
+    )
+
+    if chart_type == "VEGA_LITE":
+        chart = charts[0]
+        chart["data"] = {"values": df.to_dict(orient="records")}
+        return alt.Chart.from_dict(chart, **kwargs)
+
+    if chart_type == "DECK_GL":
+        chart = charts[0]
+        for layer in chart["layers"]:
+            if "data" in layer:
+                layer["data"] = df.to_dict(orient="records")
+        return deck_to_html(json.dumps(chart), **kwargs)
+
+    raise ValueError(f"Unknown chart type: {chart_type}")
