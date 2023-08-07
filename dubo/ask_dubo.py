@@ -8,7 +8,12 @@ import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
 
-from dubo.config import CATEGORIZE_CHART_API_URL, CHART_API_URL, query_endpoint, api_key
+from dubo.config import (
+    CATEGORIZE_CHART_API_URL,
+    CHART_API_URL,
+    query_endpoint,
+    api_key,
+)  # noqa: E402
 
 
 def _encode_params(params: dict) -> str:
@@ -169,14 +174,11 @@ def chart(
     )
 
     if chart_type == "VEGA_LITE":
-        # use altair to render the chart
-        # Add data to the chart
         chart = charts[0]
         chart["data"] = {"values": df.to_dict(orient="records")}
         return alt.Chart.from_dict(chart, **kwargs)
 
     if chart_type == "DECK_GL":
-        # use deck.gl to render the chart
         chart = charts[0]
         for layer in chart["layers"]:
             if "data" in layer:
