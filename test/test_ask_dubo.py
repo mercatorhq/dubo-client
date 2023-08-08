@@ -1,5 +1,6 @@
 import pandas as pd
-from dubo import ask, chart
+from dubo import ask, chart, query as dubo_query
+from dubo.config import set_dubo_key
 
 df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 housing_buyers_df = pd.DataFrame(
@@ -43,3 +44,10 @@ def test_chart():
         )
     )
     assert "html" in ch
+
+
+def test_query(dubo_test_key):
+    # MusicBrainz key
+    set_dubo_key(dubo_test_key)
+    # How many area types are there?
+    assert dubo_query("How many area types are there?") == [(9,)]

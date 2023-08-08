@@ -2,6 +2,7 @@ import os
 import json
 
 import sqlite3
+import time
 from typing import Dict, List, Optional, Type
 import urllib.parse
 
@@ -10,11 +11,14 @@ import altair as alt
 from pydeck.io.html import deck_to_html
 
 from dubo.config import (
+    BASE_API_URL,
     CATEGORIZE_CHART_API_URL,
     CHART_API_URL,
+    get_dubo_key,
     query_endpoint,
     api_key,
-)  # noqa: E402
+)
+from dubo.entities import DataResult
 
 
 def _encode_params(params: dict) -> str:
@@ -32,22 +36,40 @@ def _encode_params(params: dict) -> str:
     return url_parts[:-1]
 
 
-def http_GET(url: str, params: dict | None = None):
+def http_GET(url: str, params: dict | None = None, headers: dict | None = None) -> dict:
     if params:
         url += "?" + _encode_params(params)
     try:
-        # Treat pyodide as a special case
-        from pyodide.http import open_url as pyodide_open_url  # type: ignore
+        from js import XMLHttpRequest  # type: ignore
 
-        return json.loads(pyodide_open_url(url).read())
+        req = XMLHttpRequest.new()
+        req.open("GET", url, False)
+
+        # Set additional headers if provided
+        if headers:
+            for key, value in headers.items():
+                req.setRequestHeader(key, value)
+
+        req.send(None)  # No body for GET request
+        return json.loads(req.responseText)
     except ImportError:
-        from urllib.request import urlopen as urlib_open_url
+        from urllib.request import Request, urlopen as urllib_open_url
 
-        # Use as a POST
-        return json.loads(urlib_open_url(url).read())
+        # Create a Request object to allow setting headers
+        req = Request(url, method="GET")
+
+        # Set additional headers if provided
+        if headers:
+            for key, value in headers.items():
+                req.add_header(key, value)
+
+        # Use as a GET
+        return json.loads(urllib_open_url(req).read())
 
 
-def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
+def http_POST(
+    url: str, *, body: dict, params: dict | None = None, headers: dict | None = None
+) -> dict:
     if params:
         url += "?" + _encode_params(params)
     try:
@@ -55,6 +77,15 @@ def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
 
         req = XMLHttpRequest.new()
         req.open("POST", url, False)
+
+        # Set default content type header
+        req.setRequestHeader("Content-Type", "application/json")
+
+        # Set additional headers if provided
+        if headers:
+            for key, value in headers.items():
+                req.setRequestHeader(key, value)
+
         blob = Blob.new([json.dumps(body)], {type: "application/json"})
         req.send(blob)
         return json.loads(req.responseText)
@@ -62,8 +93,16 @@ def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
         from urllib.request import Request, urlopen
 
         req = Request(url, data=json.dumps(body).encode("utf-8"), method="POST")
+
+        # Set default headers
         req.add_header("Content-Type", "application/json")
         req.add_header("x-dubo-lib", "python")
+
+        # Set additional headers if provided
+        if headers:
+            for key, value in headers.items():
+                req.add_header(key, value)
+
         res = urlopen(req).read()
         return json.loads(res)
 
@@ -194,3 +233,68 @@ def chart(
         return deck_to_html(json.dumps(chart), mapbox_key=mapbox_key, **kwargs)
 
     raise ValueError(f"Unknown chart type: {chart_type}")
+
+
+def dispatch_query(query: str, fast: bool = False) -> str:
+    """
+    Dispatch the query and get a tracking_id.
+    """
+    res = http_POST(
+        BASE_API_URL + "/query/dispatch",
+        body={
+            "user_query": query,
+            "fast": fast,
+        },
+        headers={"x-dubo-key": api_key},
+    )
+    return res["id"]
+
+
+def retrieve_result(tracking_id: str) -> dict:
+    """
+    Poll for the result using the provided tracking_id.
+    """
+    delay = 0.1
+    max_delay = 10  # max delay, adjust as needed
+    while True:
+        res = http_GET(
+            BASE_API_URL + "/query/result",
+            params={
+                "id": tracking_id,
+            },
+            headers={"x-dubo-key": api_key},
+        )
+        if res["status"] == "success":
+            return res["result"]
+        elif res["status"] == "failed":
+            raise DuboException(res["error"])
+        else:
+            time.sleep(delay)
+            delay = min(delay * 2, max_delay)
+
+
+def dispatch_and_retrieve(query: str, fast: bool = False) -> dict:
+    """
+    Convenience function to dispatch the query and retrieve the result.
+    """
+    tracking_id = dispatch_query(query, fast)
+    return retrieve_result(tracking_id)
+
+
+def query(
+    payload: str,
+    fast: bool = False,
+) -> DataResult:
+    if get_dubo_key() is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+    res = dispatch_and_retrieve(payload, fast)
+    return DataResult(
+        id=res["id"],
+        query_text=res["query_text"],
+        status=res["status"],
+        results_set=res["results_set"],
+        row_count=res["row_count"],
+    )
