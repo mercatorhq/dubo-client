@@ -1,3 +1,4 @@
+import os
 import json
 
 import sqlite3
@@ -175,7 +176,9 @@ def chart(
 
     if chart_type == "VEGA_LITE":
         chart = charts[0]
-        chart["data"] = {"values": df.to_dict(orient="records")}
+        chart["data"] = {"values": df.sample(10000).to_dict(orient="records")}
+        chart["height"] = kwargs.get("height") or 390
+        chart["width"] = kwargs.get("width") or 500
         return alt.Chart.from_dict(chart, **kwargs)
 
     if chart_type == "DECK_GL":
@@ -183,6 +186,11 @@ def chart(
         for layer in chart["layers"]:
             if "data" in layer:
                 layer["data"] = df.to_dict(orient="records")
-        return deck_to_html(json.dumps(chart), **kwargs)
+        mapbox_key = (
+            kwargs.pop("mapbox_key", None)
+            or os.environ.get("MAPBOX_KEY")
+            or ""  # noqa: E501
+        )
+        return deck_to_html(json.dumps(chart), mapbox_key=mapbox_key, **kwargs)
 
     raise ValueError(f"Unknown chart type: {chart_type}")
