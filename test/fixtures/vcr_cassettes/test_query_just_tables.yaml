@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: '{"query_text": "How many area types are there?", "fast": false, "mode":
+      "just_tables"}'
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/json
+      Host:
+      - localhost:8080
+      User-Agent:
+      - Python-urllib/3.10
+      X-Dubo-Key:
+      - pk.3bc90b606e1748dfa61cc00261a5e1d9
+      X-Dubo-Lib:
+      - python
+    method: POST
+    uri: http://localhost:8080/api/v1/dubo/query/generate?x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+  response:
+    body:
+      string: '{"id":"edf2fdc35c5341f3b9b29d0c3abd7473","query_text":"How many area
+        types are there?","status":"success","tables":[{"id":"919a702c-6088-42f8-9848-46dbb7b91e3a","cols":[{"column_name":"oid","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typname","data_type":"name","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typnamespace","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typowner","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typlen","data_type":"smallint","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typbyval","data_type":"boolean","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typtype","data_type":"\"char\"","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typcategory","data_type":"\"char\"","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typispreferred","data_type":"boolean","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typisdefined","data_type":"boolean","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typdelim","data_type":"\"char\"","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typrelid","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typsubscript","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typelem","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typarray","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typinput","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typoutput","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typreceive","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typsend","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typmodin","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typmodout","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typanalyze","data_type":"regproc","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typalign","data_type":"\"char\"","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typstorage","data_type":"\"char\"","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typnotnull","data_type":"boolean","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typbasetype","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typtypmod","data_type":"integer","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typndims","data_type":"integer","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typcollation","data_type":"oid","is_nullable":false,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typdefaultbin","data_type":"pg_node_tree","is_nullable":true,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typdefault","data_type":"text","is_nullable":true,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null},{"column_name":"typacl","data_type":"ARRAY","is_nullable":true,"table_name":"pg_type","schema_name":"pg_catalog","is_partitioning_column":null}],"database_name":"postgres","table_name":"pg_type","schema_name":"pg_catalog","description":"System
+        catalog table for data types, containing information such as name, owner,
+        length, and other properties."},{"id":"2665fe8a-3022-4f55-a1f1-6aa5a783937d","cols":[{"column_name":"name","data_type":"character
+        varying","is_nullable":false,"table_name":"area_type","schema_name":"public","is_partitioning_column":null},{"column_name":"parent","data_type":"integer","is_nullable":true,"table_name":"area_type","schema_name":"public","is_partitioning_column":null},{"column_name":"description","data_type":"text","is_nullable":true,"table_name":"area_type","schema_name":"public","is_partitioning_column":null},{"column_name":"gid","data_type":"uuid","is_nullable":false,"table_name":"area_type","schema_name":"public","is_partitioning_column":null},{"column_name":"id","data_type":"integer","is_nullable":false,"table_name":"area_type","schema_name":"public","is_partitioning_column":null},{"column_name":"child_order","data_type":"integer","is_nullable":false,"table_name":"area_type","schema_name":"public","is_partitioning_column":null}],"database_name":"postgres","table_name":"area_type","schema_name":"public","description":"Defines
+        different types of areas with a description, parent-child relationship, and
+        unique identifier."}],"results_set":null,"sql_text":null,"row_count":null}'
+    headers:
+      Connection:
+      - close
+      content-length:
+      - '6319'
+      content-type:
+      - application/json
+      date:
+      - Wed, 09 Aug 2023 02:49:42 GMT
+      server:
+      - uvicorn
+    status:
+      code: 200
+      message: OK
+version: 1

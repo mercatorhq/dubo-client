@@ -2,6 +2,7 @@ import os
 import json
 
 import sqlite3
+import time
 from typing import Dict, List, Optional, Type
 import urllib.parse
 
@@ -10,11 +11,13 @@ import altair as alt
 from pydeck.io.html import deck_to_html
 
 from dubo.config import (
+    BASE_API_URL,
     CATEGORIZE_CHART_API_URL,
     CHART_API_URL,
+    get_dubo_key,
     query_endpoint,
-    api_key,
-)  # noqa: E402
+)
+from dubo.entities import DataResult
 
 
 def _encode_params(params: dict) -> str:
@@ -32,22 +35,54 @@ def _encode_params(params: dict) -> str:
     return url_parts[:-1]
 
 
-def http_GET(url: str, params: dict | None = None):
+def http_GET(
+    url: str,
+    params: dict[str, str] | None = None,
+    headers: dict[str, str] | None = None,
+) -> dict:
     if params:
         url += "?" + _encode_params(params)
     try:
-        # Treat pyodide as a special case
-        from pyodide.http import open_url as pyodide_open_url  # type: ignore
+        from js import XMLHttpRequest  # type: ignore
 
-        return json.loads(pyodide_open_url(url).read())
-    except ImportError:
-        from urllib.request import urlopen as urlib_open_url
+        req = XMLHttpRequest.new()
+        req.open("GET", url, False)
 
-        # Use as a POST
-        return json.loads(urlib_open_url(url).read())
+        if headers:
+            for key, value in headers.items():
+                req.setRequestHeader(key, value)
+
+        req.send(None)
+        return json.loads(req.responseText)
+    except (ImportError, ModuleNotFoundError):
+        pass
+    from urllib.request import Request, urlopen, HTTPError
+
+    req = Request(url, method="GET")
+    try:
+        res = urlopen(
+            req,
+        )
+        if res.status != 200:
+            raise DuboException(res.error)
+        text = res.read()
+        return json.loads(text)
+    except HTTPError as e:
+        # If the server returns an error page, print its contents
+        if e.fp:
+            error_message = e.fp.read().decode("utf-8")
+            raise Exception(f"Details: {error_message}")
+
+    if headers:
+        for key, value in headers.items():
+            req.add_header(key, value)
+
+    return json.loads(urlopen(req).read())
 
 
-def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
+def http_POST(
+    url: str, *, body: dict, params: dict | None = None, headers: dict | None = None
+) -> dict:
     if params:
         url += "?" + _encode_params(params)
     try:
@@ -55,21 +90,56 @@ def http_POST(url: str, *, body: dict, params: dict | None = None) -> dict:
 
         req = XMLHttpRequest.new()
         req.open("POST", url, False)
-        blob = Blob.new([json.dumps(body)], {type: "application/json"})
-        req.send(blob)
-        return json.loads(req.responseText)
-    except ImportError:
-        from urllib.request import Request, urlopen
+        req.setRequestHeader("Content-Type", "application/json")
 
-        req = Request(url, data=json.dumps(body).encode("utf-8"), method="POST")
-        req.add_header("Content-Type", "application/json")
-        req.add_header("x-dubo-lib", "python")
-        res = urlopen(req).read()
-        return json.loads(res)
+        if headers:
+            for key, value in headers.items():
+                req.setRequestHeader(key, value)
+
+        blob = Blob.new([json.dumps(body)], {type: "application/json"})
+        res = req.send(blob)
+        text = req.responseText
+        if req.status != 200:
+            raise DuboException(text)
+        return json.loads(text)
+    except (ImportError, ModuleNotFoundError):
+        pass
+    from urllib.request import Request, urlopen, HTTPError
+
+    req = Request(url, data=json.dumps(body).encode("utf-8"), method="POST")
+
+    req.add_header("Content-Type", "application/json")
+    req.add_header("x-dubo-lib", "python")
+
+    if headers:
+        for key, value in headers.items():
+            req.add_header(key, value)
+
+    data_payload = json.dumps(body).encode("utf-8")
+    try:
+        res = urlopen(
+            req,
+            data=data_payload,
+        )
+        if res.status != 200:
+            raise DuboException(res.error)
+        text = res.read()
+        return json.loads(text)
+    except HTTPError as e:
+        # If the server returns an error page, print its contents
+        if e.fp:
+            error_message = e.fp.read().decode("utf-8")
+            raise Exception(f"Details: {error_message}")
 
 
 class DuboException(Exception):
-    pass
+    def __init__(self, msg: str, *args: object) -> None:
+        super().__init__(*args)
+
+        self.msg = msg
+
+    def __str__(self) -> str:
+        return self.msg
 
 
 def ask(
@@ -120,8 +190,8 @@ def ask(
         params={
             "user_query": query,
             "schemas": schemas,
-            "api_key": api_key,
-            "descriptions": column_descriptions,
+            "api_key": get_dubo_key() or "",
+            "descriptions": column_descriptions,  # type: ignore
         },
     )
     try:
@@ -140,7 +210,7 @@ def ask(
                 f"rtype must be either pd.DataFrame or list but saw type: {rtype}"
             )
     except Exception as e:
-        raise DuboException(e)
+        raise DuboException(str(e))
 
 
 def chart(
@@ -152,12 +222,13 @@ def chart(
 ):
     chart_type: str | None = specify_chart_type
     if not chart_type:
+        params = {
+            "text_input": query,
+        }
         chart_type = http_GET(
             CATEGORIZE_CHART_API_URL,
-            params={
-                "text_input": query,
-            },
-        )
+            params=params,
+        )  # type: ignore
     if chart_type not in ("VEGA_LITE", "DECK_GL"):
         raise ValueError("Chart type must be one of: VEGA_LITE, DECK_GL")
 
@@ -194,3 +265,129 @@ def chart(
         return deck_to_html(json.dumps(chart), mapbox_key=mapbox_key, **kwargs)
 
     raise ValueError(f"Unknown chart type: {chart_type}")
+
+
+def dispatch_query(query: str, fast: bool = False) -> str:
+    """
+    Dispatch the query and get a tracking_id.
+    """
+    api_key = get_dubo_key()
+    if not api_key:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use this function"  # noqa: E501
+        )
+    res = http_POST(
+        BASE_API_URL + "/query/generate",
+        body={
+            "query_text": query,
+            "fast": fast,
+        },
+        params={
+            "x_dubo_key": api_key,
+        },
+        headers={"x-dubo-key": api_key},
+    )
+    return res["id"]
+
+
+def retrieve_result(tracking_id: str) -> DataResult:
+    """
+    Poll for the result using the provided tracking_id.
+    """
+    delay = 0.1
+    max_delay = 10
+    api_key = get_dubo_key()
+    if not api_key:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use this function"
+        )
+    while True:
+        res = http_GET(
+            BASE_API_URL + "/query/retrieve",
+            params={
+                "dispatch_id": tracking_id,
+                "x_dubo_key": api_key,
+            },
+            headers={"x-dubo-key": api_key},
+        )
+        if res["status"] == "success":
+            return DataResult(
+                id=res["id"],
+                query_text=res["query_text"],
+                status=res["status"],
+                results_set=res["results_set"],
+                row_count=res["row_count"],
+            )
+        elif res["status"] == "failed":
+            raise DuboException(res["error"])
+        else:
+            time.sleep(delay)
+            delay = min(delay * 2, max_delay)
+
+
+def dispatch_and_retrieve(query: str, fast: bool = False) -> DataResult:
+    """
+    Convenience function to generate the query and retrieve the result.
+    """
+    tracking_id = dispatch_query(query, fast)
+    return retrieve_result(tracking_id)
+
+
+def query(
+    payload: str,
+    fast: bool = False,
+) -> DataResult:
+    if get_dubo_key() is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+    return dispatch_and_retrieve(payload, fast)
+
+
+def generate_sql(
+    payload: str,
+    fast: bool = False,
+) -> str:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+    res = http_POST(
+        BASE_API_URL + "/query/generate",
+        body={
+            "query_text": payload,
+            "fast": fast,
+            "mode": "just_sql_text",
+        },
+        params={"x_dubo_key": api_key, "mode": "just_sql_text"},
+        headers={"x-dubo-key": api_key},
+    )
+    return res["sql_text"]
+
+
+def search_tables(
+    payload: str,
+    fast: bool = False,
+) -> List[dict]:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+    res = http_POST(
+        BASE_API_URL + "/query/generate",
+        body={
+            "query_text": payload,
+            "fast": fast,
+            "mode": "just_tables",
+        },
+        params={
+            "x_dubo_key": api_key,
+        },
+        headers={"x-dubo-key": api_key},
+    )
+    return res["tables"]
