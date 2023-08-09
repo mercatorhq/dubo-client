@@ -362,9 +362,7 @@ def generate_sql(
             "fast": fast,
             "mode": "just_sql_text",
         },
-        params={
-            "x_dubo_key": api_key,
-        },
+        params={"x_dubo_key": api_key, "mode": "just_sql_text"},
         headers={"x-dubo-key": api_key},
     )
     return res["sql_text"]

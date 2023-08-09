@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import pytest
 
-load_dotenv()
+load_dotenv(".env")
 
 
 @pytest.fixture
