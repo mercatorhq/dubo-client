@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dubo"
-version = "0.2.6"
+version = "0.2.7"
 description = "Analytics made simple"
 authors = ["Andrew Duberstein <ajduberstein@gmail.com>", "Andrew Duberstein <duber@mercator.tech>"]
 license = "MIT"
@@ -19,7 +19,11 @@ black = "^22.12.0"
 pylint = "^2.15.9"
 jupyterlite = {version = "^0.1.0b17", allow-prereleases = true}
 jupyterlab-server = "^2.18.0"
+flake8 = {version = "^3.8.0", extras = ["toml"]}
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[flake8]
+max-line-length = 88

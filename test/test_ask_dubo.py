@@ -1,6 +1,7 @@
 import pandas as pd
 from dubo import ask, chart, query as dubo_query
-from dubo.config import set_dubo_key
+from dubo.ask_dubo import generate_sql, search_tables
+from dubo.config import get_dubo_key, set_dubo_key
 
 df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 housing_buyers_df = pd.DataFrame(
@@ -49,5 +50,19 @@ def test_chart():
 def test_query(dubo_test_key):
     # MusicBrainz key
     set_dubo_key(dubo_test_key)
+    assert get_dubo_key() == dubo_test_key
     # How many area types are there?
-    assert dubo_query("How many area types are there?") == [(9,)]
+    data_result = dubo_query("How many area types are there?")
+    assert data_result.results_set == [{"count": 9}]
+
+
+def test_query_just_sql(dubo_test_key):
+    set_dubo_key(dubo_test_key)
+    sql_text = generate_sql("How many area types are there?")
+    assert sql_text == "SELECT COUNT(*) FROM area_types"
+
+
+def test_query_just_tables(dubo_test_key):
+    set_dubo_key(dubo_test_key)
+    tables = search_tables("How many area types are there?")
+    assert any(["area_types" in table["table_name"] for table in tables])
