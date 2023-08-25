@@ -12,18 +12,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    environment: 
+      name: dubo-ci
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
+
       - name: Install Poetry
         uses: snok/install-poetry@v1
+
       - name: Install Dependencies
         run: poetry install
+
       - name: Run Tests
         run: poetry run pytest
+        env:
+          DUBO_API_KEY: ${{ secrets.DUBO_API_KEY }}
+
       - name: Build
         run: poetry build
