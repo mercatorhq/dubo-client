@@ -35,6 +35,7 @@ jobs:
         run: poetry run pytest
         env:
           DUBO_API_KEY: ${{ secrets.DUBO_API_KEY }}
+          DUBO_TEST_KEY: ${{ secrets.DUBO_TEST_KEY }}
 
       - name: Build
         run: poetry build
