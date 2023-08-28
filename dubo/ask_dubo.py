@@ -42,6 +42,7 @@ def http_GET(
 ) -> dict:
     if params:
         url += "?" + _encode_params(params)
+
     try:
         from js import XMLHttpRequest  # type: ignore
 
@@ -54,30 +55,31 @@ def http_GET(
 
         req.send(None)
         return json.loads(req.responseText)
+
     except (ImportError, ModuleNotFoundError):
         pass
+
     from urllib.request import Request, urlopen, HTTPError
 
     req = Request(url, method="GET")
-    try:
-        res = urlopen(
-            req,
-        )
-        if res.status != 200:
-            raise DuboException(res.error)
-        text = res.read()
-        return json.loads(text)
-    except HTTPError as e:
-        # If the server returns an error page, print its contents
-        if e.fp:
-            error_message = e.fp.read().decode("utf-8")
-            raise Exception(f"Details: {error_message}")
 
     if headers:
         for key, value in headers.items():
             req.add_header(key, value)
 
-    return json.loads(urlopen(req).read())
+    try:
+        res = urlopen(req)
+        if res.status != 200:
+            raise Exception("HTTP Error with status: {}".format(res.status))
+        text = res.read()
+        return json.loads(text)
+
+    except HTTPError as e:
+        if e.fp:
+            error_message = e.fp.read().decode("utf-8")
+            raise Exception(f"Details: {error_message}")
+
+    raise Exception("Unknown error occurred during HTTP GET request.")
 
 
 def http_POST(
