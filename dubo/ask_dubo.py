@@ -1,9 +1,10 @@
-import os
 import json
+import os
 
+import requests
 import sqlite3
 import time
-from typing import Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type
 import urllib.parse
 
 import pandas as pd
@@ -129,6 +130,49 @@ def http_POST(
         if e.fp:
             error_message = e.fp.read().decode("utf-8")
             raise Exception(f"Details: {error_message}")
+
+
+def http_POST_with_file(
+    url: str,
+    *,
+    file: Any,
+    params: dict | None = None,
+    headers: dict | None = None,
+    data: dict | None = None,
+) -> dict:
+    if headers is None:
+        headers = {}
+    headers["x-dubo-lib"] = "python"
+
+    try:
+        files = {"file": file}
+        res = requests.post(url, headers=headers, params=params, files=files, data=data)
+        if res.status_code != 200:
+            raise DuboException(res.content.decode("utf-8"))
+        return res.json()
+    except requests.RequestException as e:
+        raise DuboException(str(e))
+
+
+def http_DELETE(
+    url: str,
+    params: Optional[Dict[str, str]] = None,
+    headers: Optional[Dict[str, str]] = None,
+) -> Dict[str, Any]:
+    full_url = f"{BASE_API_URL}{url}"
+    api_key = get_dubo_key()
+
+    if headers is None:
+        headers = {}
+
+    headers["x-dubo-key"] = api_key
+
+    response = requests.delete(full_url, params=params, headers=headers)
+
+    if response.status_code != 200:
+        raise Exception(f"Failed to delete: {response.text}")
+
+    return response.json()
 
 
 class DuboException(Exception):
@@ -390,3 +434,131 @@ def search_tables(
         headers={"x-dubo-key": api_key},
     )
     return res["tables"]
+
+
+def upload_documentation(
+    file: Any,
+    shingle_length: int = 1000,
+    step: int = 500,
+) -> bool:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+
+    res = http_POST_with_file(
+        BASE_API_URL + "/documentation",
+        file=file,
+        headers={"x-dubo-key": api_key},
+        data={
+            "shingle_length": shingle_length,
+            "step": step,
+        },
+    )
+
+    return res
+
+
+def get_documentation_by_name(file_name: str) -> dict:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+
+    url = f"{BASE_API_URL}/documentation/by-name/{file_name}"
+
+    res = http_GET(
+        url,
+        headers={"x-dubo-key": api_key},
+    )
+
+    return res
+
+
+def get_all_documents_for_data_source() -> List[dict]:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
+
+    url = f"{BASE_API_URL}/documentation/all_for_data_source"
+
+    res = http_GET(
+        url,
+        headers={"x-dubo-key": api_key},
+    )
+    return res
+
+
+def update_document(
+    data_source_documentation_id: str,
+    file_path: str,
+    shingle_length: int = 1000,
+    step: int = 500,
+) -> bool:
+    api_key = get_dubo_key()
+    if api_key is None:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use this function."
+        )
+
+    url = f"{BASE_API_URL}/documentation"
+    headers = {
+        "x-dubo-key": api_key,
+    }
+
+    try:
+        with open(file_path, "rb") as f:
+            file = {"file": f}
+            payload = {
+                "data_source_documentation_id": str(data_source_documentation_id),
+                "shingle_length": shingle_length,
+                "step": step,
+            }
+
+            response = requests.put(url, headers=headers, files=file, data=payload)
+
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise DuboException(
+                    f"Documentation update failed with status code {response.status_code}: {response.text}"
+                )
+
+    except FileNotFoundError:
+        raise DuboException(f"File {file_path} not found.")
+    except requests.RequestException as e:
+        raise DuboException(f"An error occurred while making the request: {e}")
+
+
+def delete_document_by_name(file_name: str) -> bool:
+    """
+    Delete a document by its name.
+
+    Parameters:
+        file_name (str): The name of the file to delete.
+
+    Returns:
+        bool: True if the deletion was successful, False otherwise.
+    """
+    doc = get_documentation_by_name(file_name)
+    if not doc:
+        raise Exception(f"Documentation with the name {file_name} not found")
+
+    data_source_documentation_id = doc.get("id")
+    if not data_source_documentation_id:
+        raise Exception("Document ID could not be found")
+
+    # Make the DELETE request
+    endpoint = "/documentation"
+    params = {"data_source_documentation_id": str(data_source_documentation_id)}
+
+    response = http_DELETE(url=endpoint, params=params)
+
+    return response.get("success", False)

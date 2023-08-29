@@ -1,4 +1,11 @@
-from .ask_dubo import ask, chart, query  # noqa
+from .ask_dubo import (
+    ask,
+    chart,
+    generate_sql,
+    query,
+    search_tables,
+    upload_documentation,
+)  # noqa
 from .config import DOCS_URL, FEEDBACK_URL
 from .__version__ import *  # noqa
 
