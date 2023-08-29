@@ -496,7 +496,7 @@ def get_all_documents_for_data_source() -> List[dict]:
     return res
 
 
-def update_document(
+def update_documentation(
     data_source_documentation_id: str,
     file_path: str,
     shingle_length: int = 1000,
@@ -537,7 +537,7 @@ def update_document(
         raise DuboException(f"An error occurred while making the request: {e}")
 
 
-def delete_document_by_name(file_name: str) -> bool:
+def delete_documentation_by_name(file_name: str) -> bool:
     """
     Delete a document by its name.
 
