@@ -59,6 +59,9 @@ def http_GET(
     from urllib.request import Request, urlopen, HTTPError
 
     req = Request(url, method="GET")
+    if headers:
+        for key, value in headers.items():
+            req.add_header(key, value)
     try:
         res = urlopen(
             req,
@@ -72,10 +75,6 @@ def http_GET(
         if e.fp:
             error_message = e.fp.read().decode("utf-8")
             raise Exception(f"Details: {error_message}")
-
-    if headers:
-        for key, value in headers.items():
-            req.add_header(key, value)
 
     return json.loads(urlopen(req).read())
 
