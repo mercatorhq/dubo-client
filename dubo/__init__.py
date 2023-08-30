@@ -1,14 +1,14 @@
 from .ask_dubo import (
     ask,
     chart,
-    delete_documentation_by_name,
+    create_doc,
+    delete_doc,
     generate_sql,
-    get_all_documents_for_data_source,
-    get_documentation_by_name,
+    get_all_docs,
+    get_doc,
     query,
     search_tables,
     update_documentation,
-    upload_documentation,
 )  # noqa
 from .config import DOCS_URL, FEEDBACK_URL
 from .__version__ import *  # noqa

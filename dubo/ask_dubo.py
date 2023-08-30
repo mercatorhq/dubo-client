@@ -1,10 +1,11 @@
 import json
 import os
+from uuid import UUID
 
 import requests
 import sqlite3
 import time
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type, Union
 import urllib.parse
 
 import pandas as pd
@@ -139,7 +140,7 @@ def http_POST_with_file(
     params: dict | None = None,
     headers: dict | None = None,
     data: dict | None = None,
-) -> dict:
+) -> Union[dict, str]:
     if headers is None:
         headers = {}
     headers["x-dubo-lib"] = "python"
@@ -147,9 +148,16 @@ def http_POST_with_file(
     try:
         files = {"file": file}
         res = requests.post(url, headers=headers, params=params, files=files, data=data)
+
+        # Check for successful status code
         if res.status_code != 200:
             raise DuboException(res.content.decode("utf-8"))
-        return res.json()
+
+        # Check Content-Type and process response accordingly
+        if "application/json" in res.headers.get("Content-Type", ""):
+            return res.json()
+        else:
+            return res.text  # Assuming that the UUID would be plain text
     except requests.RequestException as e:
         raise DuboException(str(e))
 
@@ -436,11 +444,11 @@ def search_tables(
     return res["tables"]
 
 
-def upload_documentation(
+def create_doc(
     file: Any,
     shingle_length: int = 1000,
     step: int = 500,
-) -> bool:
+) -> Optional[UUID]:
     api_key = get_dubo_key()
     if api_key is None:
         raise DuboException(
@@ -458,10 +466,10 @@ def upload_documentation(
         },
     )
 
-    return res
+    return res if res else None
 
 
-def get_documentation_by_name(file_name: str) -> dict:
+def get_doc(data_source_documentation_id: str) -> dict:
     api_key = get_dubo_key()
     if api_key is None:
         raise DuboException(
@@ -469,17 +477,18 @@ def get_documentation_by_name(file_name: str) -> dict:
             "this function."
         )
 
-    url = f"{BASE_API_URL}/documentation/by-name/{file_name}"
+    url = f"{BASE_API_URL}/documentation"
 
     res = http_GET(
         url,
         headers={"x-dubo-key": api_key},
+        params={"data_source_documentation_id": data_source_documentation_id},
     )
 
     return res
 
 
-def get_all_documents_for_data_source() -> List[dict]:
+def get_all_docs() -> List[Dict[str, str]]:
     api_key = get_dubo_key()
     if api_key is None:
         raise DuboException(
@@ -493,7 +502,14 @@ def get_all_documents_for_data_source() -> List[dict]:
         url,
         headers={"x-dubo-key": api_key},
     )
-    return res
+
+    if res is not None:
+        simplified_res = [
+            {"file_name": doc["file_name"], "id": doc["id"]} for doc in res
+        ]
+        return simplified_res
+
+    return []
 
 
 def update_documentation(
@@ -537,28 +553,31 @@ def update_documentation(
         raise DuboException(f"An error occurred while making the request: {e}")
 
 
-def delete_documentation_by_name(file_name: str) -> bool:
+def delete_doc(documentation_id: str) -> bool:
     """
-    Delete a document by its name.
+    Delete a document by its ID.
 
     Parameters:
-        file_name (str): The name of the file to delete.
+        documentation_id (str): The ID of the document to delete.
 
     Returns:
         bool: True if the deletion was successful, False otherwise.
     """
-    doc = get_documentation_by_name(file_name)
-    if not doc:
-        raise Exception(f"Documentation with the name {file_name} not found")
+    # No need to fetch by name, just use the provided ID directly.
+    api_key = get_dubo_key()
 
-    data_source_documentation_id = doc.get("id")
-    if not data_source_documentation_id:
-        raise Exception("Document ID could not be found")
+    url = f"{BASE_API_URL}/documentation"
+    headers = {"x-dubo-key": api_key}
 
-    # Make the DELETE request
-    endpoint = "/documentation"
-    params = {"data_source_documentation_id": str(data_source_documentation_id)}
+    # Make sure to replace this line with actual implementation
+    # if your http_DELETE function's signature is different.
+    response = http_DELETE(
+        url, headers=headers, params={"data_source_documentation_id": documentation_id}
+    )
 
-    response = http_DELETE(url=endpoint, params=params)
+    if response is None:
+        raise Exception(
+            "Failed to delete document, no response received from the server."
+        )
 
-    return response.get("success", False)
+    return response
