@@ -167,7 +167,7 @@ def http_DELETE(
     params: Optional[Dict[str, str]] = None,
     headers: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
-    full_url = f"{BASE_API_URL}{url}"
+    print(f"Deleting resource at: {url} with params: {params}")
     api_key = get_dubo_key()
 
     if headers is None:
@@ -175,7 +175,7 @@ def http_DELETE(
 
     headers["x-dubo-key"] = api_key
 
-    response = requests.delete(full_url, params=params, headers=headers)
+    response = requests.delete(url, params=params, headers=headers)
 
     if response.status_code != 200:
         raise Exception(f"Failed to delete: {response.text}")
@@ -466,7 +466,7 @@ def create_doc(
         },
     )
 
-    return res if res else None
+    return res
 
 
 def get_doc(data_source_documentation_id: str) -> dict:
@@ -512,7 +512,7 @@ def get_all_docs() -> List[Dict[str, str]]:
     return []
 
 
-def update_documentation(
+def update_doc(
     data_source_documentation_id: str,
     file_path: str,
     shingle_length: int = 1000,
@@ -524,7 +524,7 @@ def update_documentation(
             "You must set the DUBO_API_KEY environment variable to use this function."
         )
 
-    url = f"{BASE_API_URL}/documentation"
+    url = f"{BASE_API_URL}/documentation?data_source_documentation_id={data_source_documentation_id}"
     headers = {
         "x-dubo-key": api_key,
     }
@@ -553,7 +553,7 @@ def update_documentation(
         raise DuboException(f"An error occurred while making the request: {e}")
 
 
-def delete_doc(documentation_id: str) -> bool:
+def delete_doc(data_source_documentation_id: str) -> bool:
     """
     Delete a document by its ID.
 
@@ -572,7 +572,9 @@ def delete_doc(documentation_id: str) -> bool:
     # Make sure to replace this line with actual implementation
     # if your http_DELETE function's signature is different.
     response = http_DELETE(
-        url, headers=headers, params={"data_source_documentation_id": documentation_id}
+        url,
+        headers=headers,
+        params={"data_source_documentation_id": data_source_documentation_id},
     )
 
     if response is None:

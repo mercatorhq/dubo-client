@@ -8,7 +8,7 @@ from dubo import __version__  # noqa
 DUBO_ENV = os.environ.get("DUBO_ENV", "production")
 
 if DUBO_ENV == "development":
-    BASE_API_URL = "http://localhost:3000/api/v1/dubo"
+    BASE_API_URL = "http://localhost:8080/api/v1/dubo"
 else:
     BASE_API_URL = os.getenv("DUBO_BASE_URL") or "https://api.dubo.gg/api/v1/dubo"
 
