@@ -496,7 +496,7 @@ def get_all_docs() -> List[Dict[str, str]]:
             "this function."
         )
 
-    url = f"{BASE_API_URL}/documentation/all_for_data_source"
+    url = f"{BASE_API_URL}/documentation"
 
     res = http_GET(
         url,
@@ -524,21 +524,21 @@ def update_doc(
             "You must set the DUBO_API_KEY environment variable to use this function."
         )
 
-    url = f"{BASE_API_URL}/documentation?data_source_documentation_id={data_source_documentation_id}"
+    url = f"{BASE_API_URL}/documentation"
     headers = {
         "x-dubo-key": api_key,
     }
-
+    print("data_source_documentation_id", data_source_documentation_id)
     try:
         with open(file_path, "rb") as f:
-            file = {"file": f}
-            payload = {
-                "data_source_documentation_id": str(data_source_documentation_id),
+            files = {"file": f}
+            params = {
+                "data_source_documentation_id": str(UUID(data_source_documentation_id)),
                 "shingle_length": shingle_length,
                 "step": step,
             }
 
-            response = requests.put(url, headers=headers, files=file, data=payload)
+            response = requests.put(url, headers=headers, files=files, params=params)
 
             if response.status_code == 200:
                 return response.json()
