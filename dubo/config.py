@@ -1,16 +1,13 @@
 """Check if the config file exists, if not, create it."""
 
+from dotenv import load_dotenv
 import os
 
-from dubo import __version__  # noqa
+from dubo import __version__
+from dubo.common import DuboException
 
-# Check environment and set the BASE_API_URL accordingly
-DUBO_ENV = os.environ.get("DUBO_ENV", "production")
-
-if DUBO_ENV == "development":
-    BASE_API_URL = "http://localhost:8080/api/v1/dubo"
-else:
-    BASE_API_URL = os.getenv("DUBO_BASE_URL") or "https://api.dubo.gg/api/v1/dubo"
+load_dotenv()
+BASE_API_URL = os.getenv("DUBO_BASE_URL")
 
 QUERY_API_URL = "https://api.dubo.gg/v1/dubo/query"
 CHART_API_URL = "https://api.dubo.gg/v1/dubo/chart"
@@ -34,4 +31,9 @@ def get_dubo_key():
     """
     Get the API key.
     """
+    if not _api_key:
+        raise DuboException(
+            "You must set the DUBO_API_KEY environment variable to use "
+            "this function."
+        )
     return _api_key

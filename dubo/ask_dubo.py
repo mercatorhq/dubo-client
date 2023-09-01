@@ -11,6 +11,7 @@ import urllib.parse
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
+from dubo.common import DuboException
 
 from dubo.config import (
     BASE_API_URL,
@@ -167,7 +168,6 @@ def http_DELETE(
     params: Optional[Dict[str, str]] = None,
     headers: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
-    print(f"Deleting resource at: {url} with params: {params}")
     api_key = get_dubo_key()
 
     if headers is None:
@@ -178,19 +178,16 @@ def http_DELETE(
     response = requests.delete(url, params=params, headers=headers)
 
     if response.status_code != 200:
-        raise Exception(f"Failed to delete: {response.text}")
+        error_message = f"Failed to delete: {response.text}"
+        try:
+            error_details = response.json()
+            error_message += f"\nDetails: {error_details}"
+        except json.JSONDecodeError:
+            pass
+
+        raise DuboException(error_message)
 
     return response.json()
-
-
-class DuboException(Exception):
-    def __init__(self, msg: str, *args: object) -> None:
-        super().__init__(*args)
-
-        self.msg = msg
-
-    def __str__(self) -> str:
-        return self.msg
 
 
 def ask(
@@ -323,10 +320,6 @@ def dispatch_query(query: str, fast: bool = False) -> str:
     Dispatch the query and get a tracking_id.
     """
     api_key = get_dubo_key()
-    if not api_key:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use this function"  # noqa: E501
-        )
     res = http_POST(
         BASE_API_URL + "/query/generate",
         body={
@@ -348,10 +341,6 @@ def retrieve_result(tracking_id: str) -> DataResult:
     delay = 0.1
     max_delay = 10
     api_key = get_dubo_key()
-    if not api_key:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use this function"
-        )
     while True:
         res = http_GET(
             BASE_API_URL + "/query/retrieve",
@@ -388,11 +377,7 @@ def query(
     payload: str,
     fast: bool = False,
 ) -> DataResult:
-    if get_dubo_key() is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
+    get_dubo_key()
     return dispatch_and_retrieve(payload, fast)
 
 
@@ -401,11 +386,6 @@ def generate_sql(
     fast: bool = False,
 ) -> str:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
     res = http_POST(
         BASE_API_URL + "/query/generate",
         body={
@@ -424,11 +404,6 @@ def search_tables(
     fast: bool = False,
 ) -> List[dict]:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
     res = http_POST(
         BASE_API_URL + "/query/generate",
         body={
@@ -450,11 +425,6 @@ def create_doc(
     step: int = 500,
 ) -> Optional[UUID]:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
 
     res = http_POST_with_file(
         BASE_API_URL + "/documentation",
@@ -471,11 +441,6 @@ def create_doc(
 
 def get_doc(data_source_documentation_id: str) -> dict:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
 
     url = f"{BASE_API_URL}/documentation"
 
@@ -490,11 +455,6 @@ def get_doc(data_source_documentation_id: str) -> dict:
 
 def get_all_docs() -> List[Dict[str, str]]:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use "
-            "this function."
-        )
 
     url = f"{BASE_API_URL}/documentation"
 
@@ -519,38 +479,28 @@ def update_doc(
     step: int = 500,
 ) -> bool:
     api_key = get_dubo_key()
-    if api_key is None:
-        raise DuboException(
-            "You must set the DUBO_API_KEY environment variable to use this function."
-        )
 
     url = f"{BASE_API_URL}/documentation"
     headers = {
         "x-dubo-key": api_key,
     }
-    print("data_source_documentation_id", data_source_documentation_id)
-    try:
-        with open(file_path, "rb") as f:
-            files = {"file": f}
-            params = {
-                "data_source_documentation_id": str(UUID(data_source_documentation_id)),
-                "shingle_length": shingle_length,
-                "step": step,
-            }
 
-            response = requests.put(url, headers=headers, files=files, params=params)
+    with open(file_path, "rb") as f:
+        files = {"file": f}
+        params = {
+            "data_source_documentation_id": str(UUID(data_source_documentation_id)),
+            "shingle_length": shingle_length,
+            "step": step,
+        }
 
-            if response.status_code == 200:
-                return response.json()
-            else:
-                raise DuboException(
-                    f"Documentation update failed with status code {response.status_code}: {response.text}"
-                )
+        response = requests.put(url, headers=headers, files=files, params=params)
 
-    except FileNotFoundError:
-        raise DuboException(f"File {file_path} not found.")
-    except requests.RequestException as e:
-        raise DuboException(f"An error occurred while making the request: {e}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise DuboException(
+                f"Documentation update failed with status code {response.status_code}: {response.text}"
+            )
 
 
 def delete_doc(data_source_documentation_id: str) -> bool:
