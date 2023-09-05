@@ -165,3 +165,4 @@ ignore__*
 .*.swo
 .*.swn
 .DS_Store
+docs/notebooks/testing.ipynb
