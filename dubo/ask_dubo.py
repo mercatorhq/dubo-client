@@ -1,18 +1,17 @@
 import json
 import os
-from uuid import UUID
-
-import requests
 import sqlite3
 import time
-from typing import Any, Dict, List, Optional, Type, Union
+from uuid import UUID
 import urllib.parse
+from typing import Any, Dict, List, Optional, Type, Union
 
+import requests
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
-from dubo.common import DuboException
 
+from dubo.common import DuboException
 from dubo.config import (
     BASE_API_URL,
     CATEGORIZE_CHART_API_URL,
@@ -417,6 +416,32 @@ def search_tables(
         headers={"x-dubo-key": api_key},
     )
     return res["tables"]
+
+
+def filter_documentation(
+    user_query: str,
+    data_source_documentation_id: Optional[str] = None,
+    page_number: int = 1,
+    page_size: int = 25,
+) -> List[dict]:
+    api_key = get_dubo_key()
+    params = {
+        "user_query": user_query,
+        "page_number": page_number,
+        "page_size": page_size,
+        "x_dubo_key": api_key,
+    }
+
+    if data_source_documentation_id:
+        params["data_source_documentation_id"] = data_source_documentation_id
+
+    headers = {"x-dubo-key": api_key}
+
+    res = http_GET(
+        BASE_API_URL + "/query/filter-documentation", params=params, headers=headers
+    )
+
+    return res["data"]
 
 
 def create_doc(
