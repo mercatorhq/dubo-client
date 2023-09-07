@@ -22,6 +22,12 @@ from dubo.config import (
 )
 from dubo.entities import DataResult
 
+from .api_client.dubo_api_client import Client as DuboApiClient
+from api_client.dubo_api_client.api.enterprise import read_all_api_v1_dubo_documentation_get
+
+
+client = DuboApiClient(base_url=BASE_API_URL)
+
 
 def _encode_params(params: dict) -> str:
     # URL-encode a dict into a query string and append it to the URL
@@ -455,17 +461,19 @@ def get_doc(data_source_documentation_id: str) -> dict:
 
 def get_all_docs() -> List[Dict[str, str]]:
     api_key = get_dubo_key()
-
-    url = f"{BASE_API_URL}/documentation"
-
-    res = http_GET(
-        url,
-        headers={"x-dubo-key": api_key},
+    res = read_all_api_v1_dubo_documentation_get.sync(
+        client=client,
+        x_dubo_key=api_key,
     )
+    # or
+    # res = await read_all_api_v1_dubo_documentation_get.asyncio(
+    #     client=client,
+    #     x_dubo_key=api_key,
+    # )
 
     if res is not None:
         simplified_res = [
-            {"file_name": doc["file_name"], "id": doc["id"]} for doc in res
+            {"file_name": doc.file_name, "id": doc.id} for doc in res
         ]
         return simplified_res
 
