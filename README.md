@@ -7,6 +7,10 @@ It is currently in an alpha release and not yet ready for use in production pipe
 
 ## API Client Generator
 
-An api client can be generated to access the dubo API, it is located in the `/dubo/api_client` folder.
+An api client can be generated to access the dubo API, it is located in the `/dubo/api_client` folder:
+
+```shell
+just generate-api-client
+```
 
 More info can be found in the README file inside the `api-client-generator` folder.

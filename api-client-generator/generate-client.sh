@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 OPENAPI_SPECS_URL=$1;
 
 if [ -z "$OPENAPI_SPECS_URL" ]; then
@@ -28,6 +29,7 @@ else
   openapi-python-client generate --path ./openapi.json
 fi
 
-# Move generated client
+# Move generated client and remove downloaded file
 mv ./dubo-api-client/dubo_api_client ../dubo/api_client
 rm -Rf ./dubo-api-client/
+rm ./openapi.json

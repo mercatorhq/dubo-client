@@ -17,6 +17,8 @@ To generate the openapi python client, run the following command:
 
 ```shell
 ./generate-client.sh http://localhost:8080/openapi.json
+# or
+just generate-api-client
 ```
 
 ## Details
