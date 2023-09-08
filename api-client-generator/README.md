@@ -28,6 +28,6 @@ To generate the api client, the following steps happen:
    tag are filtered out
 3. Because the file that `openapi-format` generates contains some invalid array definitions, `openapi-fix.py` fixes
    these issues
-4. The existing `dubo_api_client` folder is removed, if it exits
+4. The existing `/dubo/api_client` folder is removed, if it exits
 5. Using `openapi-python-client`, the dubo api client is generated
 6. The generated folder is moved and renamed (the generators creates it in a sub-folder)

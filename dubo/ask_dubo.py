@@ -22,8 +22,8 @@ from dubo.config import (
 )
 from dubo.entities import DataResult
 
-from .api_client.dubo_api_client import Client as DuboApiClient
-from api_client.dubo_api_client.api.enterprise import read_all_api_v1_dubo_documentation_get
+from api_client import Client as DuboApiClient
+from api_client.api.enterprise import read_all_api_v1_dubo_documentation_get
 
 
 client = DuboApiClient(base_url=BASE_API_URL)

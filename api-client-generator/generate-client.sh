@@ -19,7 +19,7 @@ python openapi-fix.py
 
 # Remove existing client folders, if any
 rm -Rf ./dubo-api-client/
-rm -Rf ./dubo_api_client/
+rm -Rf ../dubo/api_client
 
 # Generate API client
 if [ -d "./dubo-api-client" ]; then
@@ -29,5 +29,5 @@ else
 fi
 
 # Move generated client
-mv ./dubo-api-client/dubo_api_client ./
+mv ./dubo-api-client/dubo_api_client ../dubo/api_client
 rm -Rf ./dubo-api-client/

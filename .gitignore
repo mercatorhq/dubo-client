@@ -166,3 +166,7 @@ ignore__*
 .*.swn
 .DS_Store
 docs/notebooks/testing.ipynb
+
+# API client
+/api-client-generator/openapi.json
+/dubo/api_client
