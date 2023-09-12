@@ -1,300 +1,304 @@
 interactions:
 - request:
-    body: '{"query_text": "How many area types are there?", "fast": false}'
+    body: '{"query_text": "How many area types are there?", "fast": false, "mode":
+      "full_execution"}'
     headers:
-      Connection:
-      - close
-      Content-Length:
-      - '63'
-      Content-Type:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '89'
+      content-type:
       - application/json
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
-      X-Dubo-Key:
-      - pk.3bc90b606e1748dfa61cc00261a5e1d9
-      X-Dubo-Lib:
-      - python
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: POST
-    uri: http://localhost:8080/api/v1/dubo/query/generate?x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/generate
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:49 GMT
+      - Tue, 12 Sep 2023 05:29:10 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:50 GMT
+      - Tue, 12 Sep 2023 05:29:10 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:50 GMT
+      - Tue, 12 Sep 2023 05:29:10 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:50 GMT
+      - Tue, 12 Sep 2023 05:29:15 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:50 GMT
+      - Tue, 12 Sep 2023 05:29:15 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:51 GMT
+      - Tue, 12 Sep 2023 05:29:15 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:53 GMT
+      - Tue, 12 Sep 2023 05:29:15 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
     headers:
       Connection:
-      - close
-      content-length:
+      - keep-alive
+      Content-Length:
       - '182'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:48:56 GMT
+      - Tue, 12 Sep 2023 05:29:27 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 - request:
-    body: null
+    body: ''
     headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
+    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-fa6afec4-5ae7-483c-83d5-26bb158bfa36
   response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
+    content: '{"id":"query-fa6afec4-5ae7-483c-83d5-26bb158bfa36","query_text":"How
+      many area types are there?","status":"success","tables":null,"results_set":[{"count":669}],"sql_text":null,"row_count":1}'
     headers:
       Connection:
-      - close
-      content-length:
-      - '182'
+      - keep-alive
+      Content-Length:
+      - '190'
       content-type:
       - application/json
       date:
-      - Wed, 09 Aug 2023 02:49:02 GMT
+      - Tue, 12 Sep 2023 05:29:34 GMT
       server:
       - uvicorn
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Connection:
-      - close
-      Host:
-      - localhost:8080
-      User-Agent:
-      - Python-urllib/3.10
-    method: GET
-    uri: http://localhost:8080/api/v1/dubo/query/retrieve?dispatch_id=query-5409071c-d6e4-41b0-9054-a24848f08446&x_dubo_key=pk.3bc90b606e1748dfa61cc00261a5e1d9
-  response:
-    body:
-      string: '{"id":"query-5409071c-d6e4-41b0-9054-a24848f08446","query_text":"How
-        many area types are there?","status":"success","tables":null,"results_set":[{"count":9}],"sql_text":null,"row_count":1}'
-    headers:
-      Connection:
-      - close
-      content-length:
-      - '188'
-      content-type:
-      - application/json
-      date:
-      - Wed, 09 Aug 2023 02:49:12 GMT
-      server:
-      - uvicorn
-    status:
-      code: 200
-      message: OK
+    http_version: HTTP/1.1
+    status_code: 200
 version: 1

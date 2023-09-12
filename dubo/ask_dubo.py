@@ -1,5 +1,6 @@
 import json
 import os
+from http import HTTPStatus
 from uuid import UUID
 
 import requests
@@ -22,8 +23,17 @@ from dubo.config import (
 )
 from dubo.entities import DataResult
 
-from api_client import Client as DuboApiClient
-from api_client.api.enterprise import read_all_api_v1_dubo_documentation_get
+from dubo.api_client import Client as DuboApiClient
+from dubo.api_client.api.enterprise import (
+    ask_dispatch_api_v1_dubo_query_generate_post,
+    ask_poll_api_v1_dubo_query_retrieve_get,
+    create_documentation_api_v1_dubo_documentation_post,
+    delete_document_by_id_api_v1_dubo_documentation_delete,
+    read_all_api_v1_dubo_documentation_get,
+    read_one_api_v1_dubo_documentation_data_source_documentation_id_get,
+    update_document_api_v1_dubo_documentation_put,
+)
+from dubo.api_client.models import *
 
 
 client = DuboApiClient(base_url=BASE_API_URL)
@@ -138,62 +148,6 @@ def http_POST(
         if e.fp:
             error_message = e.fp.read().decode("utf-8")
             raise Exception(f"Details: {error_message}")
-
-
-def http_POST_with_file(
-    url: str,
-    *,
-    file: Any,
-    params: dict | None = None,
-    headers: dict | None = None,
-    data: dict | None = None,
-) -> Union[dict, str]:
-    if headers is None:
-        headers = {}
-    headers["x-dubo-lib"] = "python"
-
-    try:
-        files = {"file": file}
-        res = requests.post(url, headers=headers, params=params, files=files, data=data)
-
-        # Check for successful status code
-        if res.status_code != 200:
-            raise DuboException(res.content.decode("utf-8"))
-
-        # Check Content-Type and process response accordingly
-        if "application/json" in res.headers.get("Content-Type", ""):
-            return res.json()
-        else:
-            return res.text  # Assuming that the UUID would be plain text
-    except requests.RequestException as e:
-        raise DuboException(str(e))
-
-
-def http_DELETE(
-    url: str,
-    params: Optional[Dict[str, str]] = None,
-    headers: Optional[Dict[str, str]] = None,
-) -> Dict[str, Any]:
-    api_key = get_dubo_key()
-
-    if headers is None:
-        headers = {}
-
-    headers["x-dubo-key"] = api_key
-
-    response = requests.delete(url, params=params, headers=headers)
-
-    if response.status_code != 200:
-        error_message = f"Failed to delete: {response.text}"
-        try:
-            error_details = response.json()
-            error_message += f"\nDetails: {error_details}"
-        except json.JSONDecodeError:
-            pass
-
-        raise DuboException(error_message)
-
-    return response.json()
 
 
 def ask(
@@ -326,18 +280,17 @@ def dispatch_query(query: str, fast: bool = False) -> str:
     Dispatch the query and get a tracking_id.
     """
     api_key = get_dubo_key()
-    res = http_POST(
-        BASE_API_URL + "/query/generate",
-        body={
-            "query_text": query,
-            "fast": fast,
-        },
-        params={
-            "x_dubo_key": api_key,
-        },
-        headers={"x-dubo-key": api_key},
+    json_body = CreateApiQuery(
+        query_text=query,
+        fast=fast,
     )
-    return res["id"]
+
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+        client=client,
+        x_dubo_key=api_key,
+        json_body=json_body,
+    )
+    return res.id
 
 
 def retrieve_result(tracking_id: str) -> DataResult:
@@ -348,23 +301,20 @@ def retrieve_result(tracking_id: str) -> DataResult:
     max_delay = 10
     api_key = get_dubo_key()
     while True:
-        res = http_GET(
-            BASE_API_URL + "/query/retrieve",
-            params={
-                "dispatch_id": tracking_id,
-                "x_dubo_key": api_key,
-            },
-            headers={"x-dubo-key": api_key},
+        res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
+            client=client,
+            x_dubo_key=api_key,
+            dispatch_id=tracking_id,
         )
-        if res["status"] == "success":
+        if res.status == QueryStatus.SUCCESS:
             return DataResult(
-                id=res["id"],
-                query_text=res["query_text"],
-                status=res["status"],
-                results_set=res["results_set"],
-                row_count=res["row_count"],
+                id=res.id,
+                query_text=res.query_text,
+                status=res.status,
+                results_set=list(map(lambda x: x.additional_properties, res.results_set)),
+                row_count=res.row_count,
             )
-        elif res["status"] == "failed":
+        elif res.status == QueryStatus.FAILED:
             raise DuboException(res["error"])
         else:
             time.sleep(delay)
@@ -392,71 +342,65 @@ def generate_sql(
     fast: bool = False,
 ) -> str:
     api_key = get_dubo_key()
-    res = http_POST(
-        BASE_API_URL + "/query/generate",
-        body={
-            "query_text": payload,
-            "fast": fast,
-            "mode": "just_sql_text",
-        },
-        params={"x_dubo_key": api_key, "mode": "just_sql_text"},
-        headers={"x-dubo-key": api_key},
+    body = CreateApiQuery(
+        query_text=payload,
+        fast=fast,
+        mode=CreateApiQueryMode.JUST_SQL_TEXT,
     )
-    return res["sql_text"]
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+        client=client,
+        x_dubo_key=api_key,
+        json_body=body,
+    )
+    return res.sql_text
 
 
 def search_tables(
     payload: str,
     fast: bool = False,
-) -> List[dict]:
+) -> List[AttenuatedDDL]:
     api_key = get_dubo_key()
-    res = http_POST(
-        BASE_API_URL + "/query/generate",
-        body={
-            "query_text": payload,
-            "fast": fast,
-            "mode": "just_tables",
-        },
-        params={
-            "x_dubo_key": api_key,
-        },
-        headers={"x-dubo-key": api_key},
+    body = CreateApiQuery(
+        query_text=payload,
+        fast=fast,
+        mode=CreateApiQueryMode.JUST_TABLES,
     )
-    return res["tables"]
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+        client=client,
+        x_dubo_key=api_key,
+        json_body=body,
+    )
+    return res.tables
 
 
 def create_doc(
     file: Any,
     shingle_length: int = 1000,
     step: int = 500,
-) -> Optional[UUID]:
+) -> DataSourceDocument | HTTPValidationError:
     api_key = get_dubo_key()
-
-    res = http_POST_with_file(
-        BASE_API_URL + "/documentation",
+    body = BodyCreateDocumentationApiV1DuboDocumentationPost(
         file=file,
-        headers={"x-dubo-key": api_key},
-        data={
-            "shingle_length": shingle_length,
-            "step": step,
-        },
+    )
+
+    res = create_documentation_api_v1_dubo_documentation_post.sync(
+        client=client,
+        x_dubo_key=api_key,
+        multipart_data=body,
+        shingle_length=shingle_length,
+        step=step,
     )
 
     return res
 
 
-def get_doc(data_source_documentation_id: str) -> dict:
+def get_doc(data_source_documentation_id: str) -> DataSourceDocument | HTTPValidationError | None:
     api_key = get_dubo_key()
-
-    url = f"{BASE_API_URL}/documentation"
-
-    res = http_GET(
-        url,
-        headers={"x-dubo-key": api_key},
-        params={"data_source_documentation_id": data_source_documentation_id},
+    return read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync(
+        client=client,
+        data_source_documentation_id=data_source_documentation_id,
+        x_dubo_key=api_key,
     )
-
-    return res
 
 
 def get_all_docs() -> List[Dict[str, str]]:
@@ -465,19 +409,13 @@ def get_all_docs() -> List[Dict[str, str]]:
         client=client,
         x_dubo_key=api_key,
     )
-    # or
-    # res = await read_all_api_v1_dubo_documentation_get.asyncio(
-    #     client=client,
-    #     x_dubo_key=api_key,
-    # )
 
-    if res is not None:
-        simplified_res = [
-            {"file_name": doc.file_name, "id": doc.id} for doc in res
-        ]
-        return simplified_res
+    if res is None:
+        return []
 
-    return []
+    return [
+        {"file_name": doc.file_name, "id": doc.id} for doc in res
+    ]
 
 
 def update_doc(
@@ -488,26 +426,24 @@ def update_doc(
 ) -> bool:
     api_key = get_dubo_key()
 
-    url = f"{BASE_API_URL}/documentation"
-    headers = {
-        "x-dubo-key": api_key,
-    }
+    with open(file_path, "rb") as file:
+        body = BodyUpdateDocumentApiV1DuboDocumentationPut(
+            file=file,
+        )
+        res = update_document_api_v1_dubo_documentation_put.sync_detailed(
+            client=client,
+            x_dubo_key=api_key,
+            data_source_documentation_id=str(UUID(data_source_documentation_id)),
+            shingle_length=shingle_length,
+            step=step,
+            multipart_data=body,
+        )
 
-    with open(file_path, "rb") as f:
-        files = {"file": f}
-        params = {
-            "data_source_documentation_id": str(UUID(data_source_documentation_id)),
-            "shingle_length": shingle_length,
-            "step": step,
-        }
-
-        response = requests.put(url, headers=headers, files=files, params=params)
-
-        if response.status_code == 200:
-            return response.json()
+        if res.status_code == HTTPStatus.OK:
+            return True
         else:
             raise DuboException(
-                f"Documentation update failed with status code {response.status_code}: {response.text}"
+                f"Documentation update failed with status code {res.status_code}: {res.content.decode('utf-8')}"
             )
 
 
@@ -524,20 +460,10 @@ def delete_doc(data_source_documentation_id: str) -> bool:
     # No need to fetch by name, just use the provided ID directly.
     api_key = get_dubo_key()
 
-    url = f"{BASE_API_URL}/documentation"
-    headers = {"x-dubo-key": api_key}
-
-    # Make sure to replace this line with actual implementation
-    # if your http_DELETE function's signature is different.
-    response = http_DELETE(
-        url,
-        headers=headers,
-        params={"data_source_documentation_id": data_source_documentation_id},
+    res = delete_document_by_id_api_v1_dubo_documentation_delete.sync(
+        client=client,
+        x_dubo_key=api_key,
+        data_source_documentation_id=data_source_documentation_id,
     )
 
-    if response is None:
-        raise Exception(
-            "Failed to delete document, no response received from the server."
-        )
-
-    return response
+    return res
