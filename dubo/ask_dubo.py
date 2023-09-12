@@ -3,27 +3,22 @@ import os
 from http import HTTPStatus
 from uuid import UUID
 
-import requests
 import sqlite3
 import time
-from typing import Any, Dict, List, Optional, Type, Union
-import urllib.parse
+from typing import Any, Dict, List, Optional, Type
 
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
 from dubo.common import DuboException
 
-from dubo.config import (
-    BASE_API_URL,
-    CATEGORIZE_CHART_API_URL,
-    CHART_API_URL,
-    get_dubo_key,
-    query_endpoint,
-)
+from dubo.config import BASE_API_URL, get_dubo_key
 from dubo.entities import DataResult
 
 from dubo.api_client import Client as DuboApiClient
+from dubo.api_client.api.dubo import (
+    read_query_v1_dubo_query_get,
+)
 from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
     ask_poll_api_v1_dubo_query_retrieve_get,
@@ -33,121 +28,14 @@ from dubo.api_client.api.enterprise import (
     read_one_api_v1_dubo_documentation_data_source_documentation_id_get,
     update_document_api_v1_dubo_documentation_put,
 )
+from dubo.api_client.api.sdk import (
+    create_dubo_chart_v1_dubo_chart_post,
+    get_query_execution_category_v1_dubo_categorize_chart_get
+)
 from dubo.api_client.models import *
 
 
 client = DuboApiClient(base_url=BASE_API_URL)
-
-
-def _encode_params(params: dict) -> str:
-    # URL-encode a dict into a query string and append it to the URL
-    # if the value is a list, then create multiple entries for the same key
-    url_parts = ""
-    for k, v in params.items():
-        if v is None:
-            continue
-        if isinstance(v, list):
-            for item in v:
-                url_parts += f"{k}={urllib.parse.quote(str(item))}&"
-        else:
-            url_parts += f"{k}={urllib.parse.quote(str(v))}&"
-    return url_parts[:-1]
-
-
-def http_GET(
-    url: str,
-    params: dict[str, str] | None = None,
-    headers: dict[str, str] | None = None,
-) -> dict:
-    if params:
-        url += "?" + _encode_params(params)
-    try:
-        from js import XMLHttpRequest  # type: ignore
-
-        req = XMLHttpRequest.new()
-        req.open("GET", url, False)
-
-        if headers:
-            for key, value in headers.items():
-                req.setRequestHeader(key, value)
-
-        req.send(None)
-        return json.loads(req.responseText)
-    except (ImportError, ModuleNotFoundError):
-        pass
-    from urllib.request import Request, urlopen, HTTPError
-
-    req = Request(url, method="GET")
-    if headers:
-        for key, value in headers.items():
-            req.add_header(key, value)
-    try:
-        res = urlopen(
-            req,
-        )
-        if res.status != 200:
-            raise DuboException(res.error)
-        text = res.read()
-        return json.loads(text)
-    except HTTPError as e:
-        # If the server returns an error page, print its contents
-        if e.fp:
-            error_message = e.fp.read().decode("utf-8")
-            raise Exception(f"Details: {error_message}")
-
-    return json.loads(urlopen(req).read())
-
-
-def http_POST(
-    url: str, *, body: dict, params: dict | None = None, headers: dict | None = None
-) -> dict:
-    if params:
-        url += "?" + _encode_params(params)
-    try:
-        from js import XMLHttpRequest, Blob  # type: ignore
-
-        req = XMLHttpRequest.new()
-        req.open("POST", url, False)
-        req.setRequestHeader("Content-Type", "application/json")
-
-        if headers:
-            for key, value in headers.items():
-                req.setRequestHeader(key, value)
-
-        blob = Blob.new([json.dumps(body)], {type: "application/json"})
-        res = req.send(blob)
-        text = req.responseText
-        if req.status != 200:
-            raise DuboException(text)
-        return json.loads(text)
-    except (ImportError, ModuleNotFoundError):
-        pass
-    from urllib.request import Request, urlopen, HTTPError
-
-    req = Request(url, data=json.dumps(body).encode("utf-8"), method="POST")
-
-    req.add_header("Content-Type", "application/json")
-    req.add_header("x-dubo-lib", "python")
-
-    if headers:
-        for key, value in headers.items():
-            req.add_header(key, value)
-
-    data_payload = json.dumps(body).encode("utf-8")
-    try:
-        res = urlopen(
-            req,
-            data=data_payload,
-        )
-        if res.status != 200:
-            raise DuboException(res.error)
-        text = res.read()
-        return json.loads(text)
-    except HTTPError as e:
-        # If the server returns an error page, print its contents
-        if e.fp:
-            error_message = e.fp.read().decode("utf-8")
-            raise Exception(f"Details: {error_message}")
 
 
 def ask(
@@ -193,17 +81,15 @@ def ask(
             f"SELECT sql FROM sqlite_schema WHERE name = '{tbl_name}'"
         ).fetchone()
         schemas.append(schema[0])
-    possible_query = http_GET(
-        query_endpoint,
-        params={
-            "user_query": query,
-            "schemas": schemas,
-            "api_key": get_dubo_key() or "",
-            "descriptions": column_descriptions,  # type: ignore
-        },
+    possible_query = read_query_v1_dubo_query_get.sync(
+        client=client,
+        user_query=query,
+        schemas=schemas,
+        descriptions=column_descriptions,
+        json_body=BodyReadQueryV1DuboQueryGet(),
     )
     try:
-        result = possible_query["query_text"]
+        result = possible_query.query_text
         if verbose:
             print(result)
     except KeyError:
@@ -224,43 +110,43 @@ def ask(
 def chart(
     query: str,
     df: pd.DataFrame,
-    specify_chart_type: str | None = None,
+    specify_chart_type: ChartType | None = None,
     verbose=False,
     **kwargs,
 ):
-    chart_type: str | None = specify_chart_type
+    chart_type: ChartType | None = specify_chart_type
     if not chart_type:
-        params = {
-            "text_input": query,
-        }
-        chart_type = http_GET(
-            CATEGORIZE_CHART_API_URL,
-            params=params,
-        )  # type: ignore
-    if chart_type not in ("VEGA_LITE", "DECK_GL"):
+        chart_type = get_query_execution_category_v1_dubo_categorize_chart_get.sync(
+            client=client,
+            text_input=query,
+        )
+    if chart_type not in (ChartType.VEGA_LITE, ChartType.DECK_GL):
         raise ValueError("Chart type must be one of: VEGA_LITE, DECK_GL")
 
     if verbose:
         print("Generating a chart of type:", chart_type)
 
-    charts = http_POST(
-        CHART_API_URL,
-        body={
-            "user_query": query,
-            "data_snippet": df.head().to_dict(orient="records"),
-            "fast": False,
-            "chart_type": chart_type.lower(),
-        },
+    data_snippet = df.head().to_dict(orient="records")
+    data_snippet = list(map(lambda x: DuboChartQueryDataSnippetItem.from_dict(x), data_snippet))
+
+    charts = create_dubo_chart_v1_dubo_chart_post.sync(
+        client=client,
+        json_body=DuboChartQuery(
+            user_query=query,
+            data_snippet=data_snippet,
+            fast=False,
+            chart_type=chart_type.lower()
+        ),
     )
 
-    if chart_type == "VEGA_LITE":
+    if chart_type == ChartType.VEGA_LITE:
         chart = charts[0]
         chart["data"] = {"values": df.sample(10000).to_dict(orient="records")}
         chart["height"] = kwargs.get("height") or 390
         chart["width"] = kwargs.get("width") or 500
         return alt.Chart.from_dict(chart, **kwargs)
 
-    if chart_type == "DECK_GL":
+    if chart_type == ChartType.DECK_GL:
         chart = charts[0]
         for layer in chart["layers"]:
             if "data" in layer:

@@ -2,6 +2,7 @@ import pandas as pd
 import vcr
 
 from dubo import ask, chart, query as dubo_query
+from dubo.api_client.models import ChartType
 from dubo.ask_dubo import generate_sql, search_tables
 
 # Constants
@@ -47,7 +48,7 @@ def test_ask_multi():
 def test_chart():
     ch = str(
         chart(
-            "Map the houses", housing_df, specify_chart_type="DECK_GL", as_string=True
+            "Map the houses", housing_df, specify_chart_type=ChartType.DECK_GL, as_string=True
         )
     )
     assert "html" in ch
