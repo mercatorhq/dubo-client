@@ -170,4 +170,3 @@ docs/notebooks/testing.ipynb
 # API client
 /api-client-generator/openapi.json
 /api-client-generator/dubo-api-client
-/dubo/api_client
