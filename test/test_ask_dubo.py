@@ -29,12 +29,14 @@ housing_df = pd.read_csv(
 )
 
 
+@myvcr.use_cassette("test_ask.yaml")  # type: ignore
 def test_ask():
     TEST_TABLE = [("What is the sum of A?", [(6,)]), ("What is the sum of a?", [(6,)])]
     for query, expected in TEST_TABLE:
         assert ask(query, df, rtype=list) == expected
 
 
+@myvcr.use_cassette("test_ask_multi.yaml")  # type: ignore
 def test_ask_multi():
     TEST_TABLE = [
         ("How many houses are available to Bob based on his preferences?", [(110,)])
@@ -45,6 +47,7 @@ def test_ask_multi():
         ), query
 
 
+@myvcr.use_cassette("test_chart.yaml")  # type: ignore
 def test_chart():
     ch = str(
         chart(
@@ -54,7 +57,7 @@ def test_chart():
     assert "html" in ch
 
 
-@myvcr.use_cassette("test_ask_dubo.yaml")  # type: ignore
+@myvcr.use_cassette("test_query.yaml")  # type: ignore
 def test_query():
     data_result = dubo_query("How many area types are there?")
     # assert data_result.results_set in ([{"num_area_types": 9}], [{"count": 9}])
