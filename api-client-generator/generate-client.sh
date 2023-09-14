@@ -15,6 +15,9 @@ curl -o openapi.json "$OPENAPI_SPECS_URL"
 
 # Clean up openapi.json file (filter out unwanted endpoints)
 echo "Cleaning up openapi file"
+## Run the script twice: 1st time to keep tagged operations only, 2nd time to remove unused schemas
+## removing unused schemas only works once the operations have already been filtered out
+npx openapi-format ./openapi.json -o ./openapi.json  --filterFile ./openapi-filters.yaml
 npx openapi-format ./openapi.json -o ./openapi.json  --filterFile ./openapi-filters.yaml
 python openapi-fix.py
 

@@ -1,1 +1,2 @@
 inverseTags: ["keyed_api", "sdk"]
+unusedComponents: ["schemas"]
