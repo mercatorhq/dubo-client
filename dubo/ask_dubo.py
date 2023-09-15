@@ -51,19 +51,21 @@ def ask(
     :param query: The question to ask Dubo.
     :param data: The DataFrame to ask Dubo about.
     :param verbose: Whether to print the query that Dubo is running.
+    :param rtype: Expected returned type.
     :param column_descriptions: A dictionary of column names to descriptions.
+    :type query: str
+    :type rtype: pd.DataFrame or list
+    :return: The result of the query.
 
-    # Example
+    ##### Example
     ```python
     import pandas as pd
     from dubo import ask
 
-    df = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
-    ask('What is the sum of a?', df)
+    data = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    ask('What is the sum of a?', data, rtype=list)
     > [(6,)]
     ```
-    :return The result of the query.
-    :type query: str
     """
     conn = sqlite3.connect(":memory:")
 
