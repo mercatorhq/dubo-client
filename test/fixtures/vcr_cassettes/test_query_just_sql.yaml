@@ -18,7 +18,7 @@ interactions:
       user-agent:
       - python-httpx/0.24.1
       x-dubo-key:
-      - pk.test-key
+      - pk.f7345174d27f4dbc908afadbaa7d69af
     method: POST
     uri: https://api.dubo.gg/api/v1/dubo/query/generate
   response:
