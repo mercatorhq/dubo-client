@@ -13,7 +13,7 @@ from pydeck.io.html import deck_to_html
 from dubo.common import DuboException
 
 from dubo.config import BASE_API_URL, get_dubo_key
-from dubo.entities import DataResult
+from dubo.entities import DataResult, ChartType
 
 from dubo.api_client import Client as DuboApiClient
 from dubo.api_client.api.dubo import (
