@@ -12,3 +12,6 @@ default:
 
 generate-api-client:
 	@cd api-client-generator && ./generate-client.sh "${DUBO_BASE_URL:-http://localhost:8080}/openapi.json"
+
+generate-doc:
+	@pydoc-markdown
