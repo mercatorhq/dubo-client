@@ -13,6 +13,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     user_query: str,
+    data_source_documentation_id: Union[Unset, None, str] = UNSET,
     page_number: Union[Unset, None, int] = 1,
     page_size: Union[Unset, None, int] = 25,
     x_dubo_key: str,
@@ -22,6 +23,8 @@ def _get_kwargs(
 
     params: Dict[str, Any] = {}
     params["user_query"] = user_query
+
+    params["data_source_documentation_id"] = data_source_documentation_id
 
     params["page_number"] = page_number
 
@@ -69,6 +72,7 @@ def sync_detailed(
     *,
     client: Union[AuthenticatedClient, Client],
     user_query: str,
+    data_source_documentation_id: Union[Unset, None, str] = UNSET,
     page_number: Union[Unset, None, int] = 1,
     page_size: Union[Unset, None, int] = 25,
     x_dubo_key: str,
@@ -77,6 +81,7 @@ def sync_detailed(
 
     Args:
         user_query (str):
+        data_source_documentation_id (Union[Unset, None, str]):
         page_number (Union[Unset, None, int]): Page number Default: 1.
         page_size (Union[Unset, None, int]): Page size Default: 25.
         x_dubo_key (str):
@@ -91,6 +96,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         user_query=user_query,
+        data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
         x_dubo_key=x_dubo_key,
@@ -107,6 +113,7 @@ def sync(
     *,
     client: Union[AuthenticatedClient, Client],
     user_query: str,
+    data_source_documentation_id: Union[Unset, None, str] = UNSET,
     page_number: Union[Unset, None, int] = 1,
     page_size: Union[Unset, None, int] = 25,
     x_dubo_key: str,
@@ -115,6 +122,7 @@ def sync(
 
     Args:
         user_query (str):
+        data_source_documentation_id (Union[Unset, None, str]):
         page_number (Union[Unset, None, int]): Page number Default: 1.
         page_size (Union[Unset, None, int]): Page size Default: 25.
         x_dubo_key (str):
@@ -130,6 +138,7 @@ def sync(
     return sync_detailed(
         client=client,
         user_query=user_query,
+        data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
         x_dubo_key=x_dubo_key,
@@ -140,6 +149,7 @@ async def asyncio_detailed(
     *,
     client: Union[AuthenticatedClient, Client],
     user_query: str,
+    data_source_documentation_id: Union[Unset, None, str] = UNSET,
     page_number: Union[Unset, None, int] = 1,
     page_size: Union[Unset, None, int] = 25,
     x_dubo_key: str,
@@ -148,6 +158,7 @@ async def asyncio_detailed(
 
     Args:
         user_query (str):
+        data_source_documentation_id (Union[Unset, None, str]):
         page_number (Union[Unset, None, int]): Page number Default: 1.
         page_size (Union[Unset, None, int]): Page size Default: 25.
         x_dubo_key (str):
@@ -162,6 +173,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         user_query=user_query,
+        data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
         x_dubo_key=x_dubo_key,
@@ -176,6 +188,7 @@ async def asyncio(
     *,
     client: Union[AuthenticatedClient, Client],
     user_query: str,
+    data_source_documentation_id: Union[Unset, None, str] = UNSET,
     page_number: Union[Unset, None, int] = 1,
     page_size: Union[Unset, None, int] = 25,
     x_dubo_key: str,
@@ -184,6 +197,7 @@ async def asyncio(
 
     Args:
         user_query (str):
+        data_source_documentation_id (Union[Unset, None, str]):
         page_number (Union[Unset, None, int]): Page number Default: 1.
         page_size (Union[Unset, None, int]): Page size Default: 25.
         x_dubo_key (str):
@@ -200,6 +214,7 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             user_query=user_query,
+            data_source_documentation_id=data_source_documentation_id,
             page_number=page_number,
             page_size=page_size,
             x_dubo_key=x_dubo_key,
