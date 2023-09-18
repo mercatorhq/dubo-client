@@ -60,9 +60,7 @@ def test_chart():
 @myvcr.use_cassette("test_query.yaml")  # type: ignore
 def test_query():
     data_result = dubo_query("How many area types are there?")
-    # assert data_result.results_set in ([{"num_area_types": 9}], [{"count": 9}])
-    # TODO replace temporary assertion
-    assert data_result.results_set in [[{"count": 669}]]
+    assert data_result.results_set in ([{"num_area_types": 9}], [{"count": 9}])
 
 
 @myvcr.use_cassette("test_query_just_sql.yaml")  # type: ignore
@@ -83,6 +81,4 @@ def test_query_just_sql():
 @myvcr.use_cassette("test_query_just_tables.yaml")  # type: ignore
 def test_query_just_tables():
     tables = search_tables("How many area types are there?")
-    # assert any(["area_type" == table.table_name for table in tables])
-    # TODO replace temporary assertion
-    assert any(["element_types" == table.table_name for table in tables])
+    assert any(["area_type" == table.table_name for table in tables])
