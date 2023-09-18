@@ -18,8 +18,3 @@ class DataResult:
         ]:
             return False
         return True
-
-
-class ChartType(str):
-    VEGA_LITE = "vega_lite"
-    DECK_GL = "deck_gl"

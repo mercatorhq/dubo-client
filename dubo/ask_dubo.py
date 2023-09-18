@@ -13,7 +13,7 @@ from pydeck.io.html import deck_to_html
 from dubo.common import DuboException
 
 from dubo.config import BASE_API_URL, get_dubo_key
-from dubo.entities import DataResult, ChartType
+from dubo.entities import DataResult
 
 from dubo.api_client import Client as DuboApiClient
 from dubo.api_client.api.dubo import (
@@ -137,7 +137,7 @@ def chart(
             user_query=query,
             data_snippet=data_snippet,
             fast=False,
-            chart_type=chart_type.lower()
+            chart_type=chart_type,
         ),
     )
 

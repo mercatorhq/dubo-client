@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar, Union
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.chart_type import ChartType
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ class DuboChartQuery:
         data_snippet (List['DuboChartQueryDataSnippetItem']):
         fast (Union[Unset, bool]): Use faster less accurate model
         chart_spec (Union[Unset, DuboChartQueryChartSpec]):
-        chart_type (Union[Unset, str]):  Default: 'vega_lite'.
+        chart_type (Union[Unset, ChartType]): An enumeration. Default: ChartType.DECK_GL.
         thread_id (Union[Unset, str]):
     """
 
@@ -29,7 +30,7 @@ class DuboChartQuery:
     data_snippet: List["DuboChartQueryDataSnippetItem"]
     fast: Union[Unset, bool] = False
     chart_spec: Union[Unset, "DuboChartQueryChartSpec"] = UNSET
-    chart_type: Union[Unset, str] = "vega_lite"
+    chart_type: Union[Unset, ChartType] = ChartType.DECK_GL
     thread_id: Union[Unset, str] = UNSET
     additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -46,7 +47,10 @@ class DuboChartQuery:
         if not isinstance(self.chart_spec, Unset):
             chart_spec = self.chart_spec.to_dict()
 
-        chart_type = self.chart_type
+        chart_type: Union[Unset, str] = UNSET
+        if not isinstance(self.chart_type, Unset):
+            chart_type = self.chart_type.value
+
         thread_id = self.thread_id
 
         field_dict: Dict[str, Any] = {}
@@ -92,7 +96,12 @@ class DuboChartQuery:
         else:
             chart_spec = DuboChartQueryChartSpec.from_dict(_chart_spec)
 
-        chart_type = d.pop("chart_type", UNSET)
+        _chart_type = d.pop("chart_type", UNSET)
+        chart_type: Union[Unset, ChartType]
+        if isinstance(_chart_type, Unset):
+            chart_type = UNSET
+        else:
+            chart_type = ChartType(_chart_type)
 
         thread_id = d.pop("thread_id", UNSET)
 
