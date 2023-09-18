@@ -64,7 +64,8 @@ def ask(
 
     data = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
     ask('What is the sum of a?', data, rtype=list)
-    > [(6,)]
+
+    # [(6,)]
     ```
     """
     conn = sqlite3.connect(":memory:")
@@ -116,6 +117,46 @@ def chart(
     verbose=False,
     **kwargs,
 ):
+    """
+    Ask Dubo to generate a chart.
+
+    :param query: The chart to ask Dubo to generate.
+    :param df: The DataFrame for the chart.
+    :param specify_chart_type: Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
+    :param verbose: Whether to print verbose logs.
+    :type query: str
+    :type df: pd.DataFrame
+    :type specify_chart_type: ChartType | None
+    :type verbose: bool
+    :return: The chart.
+
+    ##### Example
+    ```python
+    import pandas as pd
+
+    from dubo import chart
+    from dubo.api_client.models import ChartType
+
+    housing_df = pd.read_csv("https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv")
+
+    res = chart(
+        query="Map the houses",
+        df=housing_df,
+        specify_chart_type=ChartType.DECK_GL,
+        as_string=True,
+    )
+    # <!DOCTYPE html>
+    #    <html>
+    #    ...
+    #    <body>
+    #        <div id="deck-container">
+    #        </div>
+    #    </body>
+    #    <script>
+    #        const container = document.getElementById('deck-container');
+    #        ...
+    ```
+    """
     chart_type: ChartType | None = specify_chart_type
     if not chart_type:
         chart_type = get_query_execution_category_v1_dubo_categorize_chart_get.sync(

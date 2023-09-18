@@ -2,6 +2,7 @@
 
 * [ask\_dubo](#ask_dubo)
   * [ask](#ask_dubo.ask)
+  * [chart](#ask_dubo.chart)
   * [dispatch\_query](#ask_dubo.dispatch_query)
   * [retrieve\_result](#ask_dubo.retrieve_result)
   * [dispatch\_and\_retrieve](#ask_dubo.dispatch_and_retrieve)
@@ -41,7 +42,59 @@ from dubo import ask
 
 data = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
 ask('What is the sum of a?', data, rtype=list)
-> [(6,)]
+
+# [(6,)]
+```
+
+<a id="ask_dubo.chart"></a>
+
+## chart
+
+```python
+def chart(query: str,
+          df: pd.DataFrame,
+          specify_chart_type: ChartType | None = None,
+          verbose=False,
+          **kwargs)
+```
+
+Ask Dubo to generate a chart.
+
+**Arguments**:
+
+- `query` (`str`): The chart to ask Dubo to generate.
+- `df` (`pd.DataFrame`): The DataFrame for the chart.
+- `specify_chart_type` (`ChartType | None`): Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
+- `verbose` (`bool`): Whether to print verbose logs.
+
+**Returns**:
+
+The chart.
+##### Example
+```python
+import pandas as pd
+
+from dubo import chart
+from dubo.api_client.models import ChartType
+
+housing_df = pd.read_csv("https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv")
+
+res = chart(
+    query="Map the houses",
+    df=housing_df,
+    specify_chart_type=ChartType.DECK_GL,
+    as_string=True,
+)
+# <!DOCTYPE html>
+#    <html>
+#    ...
+#    <body>
+#        <div id="deck-container">
+#        </div>
+#    </body>
+#    <script>
+#        const container = document.getElementById('deck-container');
+#        ...
 ```
 
 <a id="ask_dubo.dispatch_query"></a>
