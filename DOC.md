@@ -6,6 +6,8 @@
   * [dispatch\_query](#ask_dubo.dispatch_query)
   * [retrieve\_result](#ask_dubo.retrieve_result)
   * [dispatch\_and\_retrieve](#ask_dubo.dispatch_and_retrieve)
+  * [create\_doc](#ask_dubo.create_doc)
+  * [update\_doc](#ask_dubo.update_doc)
   * [delete\_doc](#ask_dubo.delete_doc)
 
 <a id="ask_dubo.ask"></a>
@@ -127,6 +129,90 @@ def dispatch_and_retrieve(query: str, fast: bool = False) -> DataResult
 
 Convenience function to generate the query and retrieve the result.
 
+<a id="ask_dubo.create_doc"></a>
+
+## create\_doc
+
+```python
+def create_doc(file_path: str,
+               shingle_length: int = 1000,
+               step: int = 500) -> DataSourceDocument
+```
+
+Create Documentation.
+
+**Arguments**:
+
+- `file_path`: The path to the file to upload.
+- `shingle_length`: TBC.
+- `step`: TBC.
+
+**Returns**:
+
+The documentation
+##### Example
+```python
+from dubo import update_doc
+
+update_doc(
+    data_source_documentation_id=res.id,
+    file_path="./documentation.txt",
+    shingle_length=1000,
+    step=500,
+)
+# > True
+
+res = create_doc(
+    file_path="./documentation.txt",
+    shingle_length=1000,
+    step=500,
+)
+# > DataSourceDocument(
+#     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+#     file_name='documentation.txt',
+#     data_source_id=...,
+#     organization_id=...,
+#     created_at=...,
+#     updated_at=...,
+# )
+```
+
+<a id="ask_dubo.update_doc"></a>
+
+## update\_doc
+
+```python
+def update_doc(data_source_documentation_id: str,
+               file_path: str,
+               shingle_length: int = 1000,
+               step: int = 500) -> bool
+```
+
+Update Document.
+
+**Arguments**:
+
+- `data_source_documentation_id`: The ID of the document to update.
+- `file_path`: The path to the file to upload.
+- `shingle_length`: TBC.
+- `step`: TBC.
+
+**Returns**:
+
+True if successful, False otherwise
+##### Example
+```python
+from dubo import update_doc
+
+update_doc(
+    data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+    file_path="./documentation.txt",
+    shingle_length=1000,
+    step=500,
+)
+# > True
+```
+
 <a id="ask_dubo.delete_doc"></a>
 
 ## delete\_doc
@@ -139,10 +225,16 @@ Delete a document by its ID.
 
 **Arguments**:
 
-- `documentation_id` _str_ - The ID of the document to delete.
-  
+- `data_source_documentation_id`: The ID of the document to delete.
 
 **Returns**:
 
-- `bool` - True if the deletion was successful, False otherwise.
+True if the deletion was successful, False otherwise
+##### Example
+```python
+from dubo import delete_doc
+
+delete_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
+# > True
+```
 

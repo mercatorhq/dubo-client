@@ -5,14 +5,14 @@ from uuid import UUID
 
 import sqlite3
 import time
-from typing import Any, Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type
 
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
-from dubo.common import DuboException
 
 from dubo.config import BASE_API_URL, get_dubo_key
+from dubo.common import DuboException
 from dubo.entities import DataResult
 
 from dubo.api_client import Client as DuboApiClient
@@ -33,6 +33,7 @@ from dubo.api_client.api.sdk import (
     get_query_execution_category_v1_dubo_categorize_chart_get
 )
 from dubo.api_client.models import *
+from dubo.api_client.types import *
 
 
 client = DuboApiClient(base_url=BASE_API_URL)
@@ -303,24 +304,70 @@ def search_tables(
 
 
 def create_doc(
-    file: Any,
+    file_path: str,
     shingle_length: int = 1000,
     step: int = 500,
-) -> DataSourceDocument | HTTPValidationError:
+) -> DataSourceDocument:
+    """
+    Create Documentation.
+
+    :param file_path: The path to the file to upload.
+    :param shingle_length: TBC.
+    :param step: TBC.
+    :return: The documentation
+
+    ##### Example
+    ```python
+    from dubo import update_doc
+
+    update_doc(
+        data_source_documentation_id=res.id,
+        file_path="./documentation.txt",
+        shingle_length=1000,
+        step=500,
+    )
+    # > True
+
+    res = create_doc(
+        file_path="./documentation.txt",
+        shingle_length=1000,
+        step=500,
+    )
+    # > DataSourceDocument(
+    #     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+    #     file_name='documentation.txt',
+    #     data_source_id=...,
+    #     organization_id=...,
+    #     created_at=...,
+    #     updated_at=...,
+    # )
+    ```
+    """
     api_key = get_dubo_key()
-    body = BodyCreateDocumentationApiV1DuboDocumentationPost(
-        file=file,
-    )
 
-    res = create_documentation_api_v1_dubo_documentation_post.sync(
-        client=client,
-        x_dubo_key=api_key,
-        multipart_data=body,
-        shingle_length=shingle_length,
-        step=step,
-    )
+    with open(file_path, "rb") as doc:
+        file_name = os.path.basename(file_path)
+        file = File(
+            payload=doc,
+            file_name=file_name,
+        )
 
-    return res
+        body = BodyCreateDocumentationApiV1DuboDocumentationPost(file)
+
+        res = create_documentation_api_v1_dubo_documentation_post.sync_detailed(
+            client=client,
+            x_dubo_key=api_key,
+            multipart_data=body,
+            shingle_length=shingle_length,
+            step=step,
+        )
+
+        if res.status_code == HTTPStatus.OK:
+            return res.parsed
+        else:
+            raise DuboException(
+                f"Documentation created failed with status code {res.status_code}: {res.content.decode('utf-8')}"
+            )
 
 
 def get_doc(data_source_documentation_id: str) -> DataSourceDocument | HTTPValidationError | None:
@@ -353,9 +400,36 @@ def update_doc(
     shingle_length: int = 1000,
     step: int = 500,
 ) -> bool:
+    """
+    Update Document.
+
+    :param data_source_documentation_id: The ID of the document to update.
+    :param file_path: The path to the file to upload.
+    :param shingle_length: TBC.
+    :param step: TBC.
+    :return: True if successful, False otherwise
+
+    ##### Example
+    ```python
+    from dubo import update_doc
+
+    update_doc(
+        data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+        file_path="./documentation.txt",
+        shingle_length=1000,
+        step=500,
+    )
+    # > True
+    ```
+    """
     api_key = get_dubo_key()
 
-    with open(file_path, "rb") as file:
+    with open(file_path, "rb") as doc:
+        file_name = os.path.basename(file_path)
+        file = File(
+            payload=doc,
+            file_name=file_name,
+        )
         body = BodyUpdateDocumentApiV1DuboDocumentationPut(
             file=file,
         )
@@ -380,11 +454,16 @@ def delete_doc(data_source_documentation_id: str) -> bool:
     """
     Delete a document by its ID.
 
-    Parameters:
-        documentation_id (str): The ID of the document to delete.
+    :param data_source_documentation_id: The ID of the document to delete.
+    :return: True if the deletion was successful, False otherwise
 
-    Returns:
-        bool: True if the deletion was successful, False otherwise.
+    ##### Example
+    ```python
+    from dubo import delete_doc
+
+    delete_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
+    # > True
+    ```
     """
     # No need to fetch by name, just use the provided ID directly.
     api_key = get_dubo_key()
