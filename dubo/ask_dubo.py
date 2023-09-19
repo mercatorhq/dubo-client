@@ -171,7 +171,9 @@ def chart(
         print("Generating a chart of type:", chart_type)
 
     data_snippet = df.head().to_dict(orient="records")
-    data_snippet = list(map(lambda x: DuboChartQueryDataSnippetItem.from_dict(x), data_snippet))
+    data_snippet = [
+        DuboChartQueryDataSnippetItem.from_dict(item) for item in data_snippet
+    ]
 
     charts = create_dubo_chart_v1_dubo_chart_post.sync(
         client=client,
@@ -241,7 +243,9 @@ def retrieve_result(tracking_id: str) -> DataResult:
                 id=res.id,
                 query_text=res.query_text,
                 status=res.status,
-                results_set=list(map(lambda x: x.additional_properties, res.results_set)),
+                results_set=[
+                    item.additional_properties for item in res.results_set
+                ],
                 row_count=res.row_count,
             )
         elif res.status == QueryStatus.FAILED:
