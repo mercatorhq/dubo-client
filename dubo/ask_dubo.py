@@ -370,17 +370,45 @@ def create_doc(
             return res.parsed
         else:
             raise DuboException(
-                f"Documentation created failed with status code {res.status_code}: {res.content.decode('utf-8')}"
+                f"Documentation create failed with status code {res.status_code}: {res.content.decode('utf-8')}"
             )
 
 
-def get_doc(data_source_documentation_id: str) -> DataSourceDocument | HTTPValidationError | None:
+def get_doc(data_source_documentation_id: str) -> DataSourceDocument:
+    """
+    Get one document by ID.
+
+    :param data_source_documentation_id: The ID of the document to get.
+    :return: The document
+
+    ##### Example
+    ```python
+    from dubo import get_all_docs
+
+    res = get_all_docs()
+    # > DataSourceDocument(
+    #     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+    #     file_name='documentation.txt',
+    #     data_source_id=...,
+    #     organization_id=...,
+    #     created_at=...,
+    #     updated_at=...,
+    # )
+    ```
+    """
     api_key = get_dubo_key()
-    return read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync(
+    res = read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync_detailed(
         client=client,
         data_source_documentation_id=data_source_documentation_id,
         x_dubo_key=api_key,
     )
+
+    if res.status_code == HTTPStatus.OK:
+        return res.parsed
+    else:
+        raise DuboException(
+            f"Documentation get failed with status code {res.status_code}: {res.content.decode('utf-8')}"
+        )
 
 
 def get_all_docs() -> List[Dict[str, str]]:

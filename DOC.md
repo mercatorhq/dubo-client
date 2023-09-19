@@ -7,6 +7,7 @@
   * [retrieve\_result](#ask_dubo.retrieve_result)
   * [dispatch\_and\_retrieve](#ask_dubo.dispatch_and_retrieve)
   * [create\_doc](#ask_dubo.create_doc)
+  * [get\_doc](#ask_dubo.get_doc)
   * [get\_all\_docs](#ask_dubo.get_all_docs)
   * [update\_doc](#ask_dubo.update_doc)
   * [delete\_doc](#ask_dubo.delete_doc)
@@ -168,6 +169,38 @@ res = create_doc(
     shingle_length=1000,
     step=500,
 )
+# > DataSourceDocument(
+#     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+#     file_name='documentation.txt',
+#     data_source_id=...,
+#     organization_id=...,
+#     created_at=...,
+#     updated_at=...,
+# )
+```
+
+<a id="ask_dubo.get_doc"></a>
+
+## get\_doc
+
+```python
+def get_doc(data_source_documentation_id: str) -> DataSourceDocument
+```
+
+Get one document by ID.
+
+**Arguments**:
+
+- `data_source_documentation_id`: The ID of the document to get.
+
+**Returns**:
+
+The document
+##### Example
+```python
+from dubo import get_all_docs
+
+res = get_all_docs()
 # > DataSourceDocument(
 #     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
 #     file_name='documentation.txt',
