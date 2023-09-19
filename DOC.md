@@ -3,9 +3,6 @@
 * [ask\_dubo](#ask_dubo)
   * [ask](#ask_dubo.ask)
   * [chart](#ask_dubo.chart)
-  * [dispatch\_query](#ask_dubo.dispatch_query)
-  * [retrieve\_result](#ask_dubo.retrieve_result)
-  * [dispatch\_and\_retrieve](#ask_dubo.dispatch_and_retrieve)
   * [create\_doc](#ask_dubo.create_doc)
   * [get\_doc](#ask_dubo.get_doc)
   * [get\_all\_docs](#ask_dubo.get_all_docs)
@@ -100,36 +97,6 @@ res = chart(
 #        const container = document.getElementById('deck-container');
 #        ...
 ```
-
-<a id="ask_dubo.dispatch_query"></a>
-
-## dispatch\_query
-
-```python
-def dispatch_query(query: str, fast: bool = False) -> str
-```
-
-Dispatch the query and get a tracking_id.
-
-<a id="ask_dubo.retrieve_result"></a>
-
-## retrieve\_result
-
-```python
-def retrieve_result(tracking_id: str) -> DataResult
-```
-
-Poll for the result using the provided tracking_id.
-
-<a id="ask_dubo.dispatch_and_retrieve"></a>
-
-## dispatch\_and\_retrieve
-
-```python
-def dispatch_and_retrieve(query: str, fast: bool = False) -> DataResult
-```
-
-Convenience function to generate the query and retrieve the result.
 
 <a id="ask_dubo.create_doc"></a>
 

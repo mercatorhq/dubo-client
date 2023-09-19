@@ -4,16 +4,16 @@ from http import HTTPStatus
 from uuid import UUID
 
 import sqlite3
-import time
 from typing import Dict, List, Optional, Type
 
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
 
-from dubo.config import BASE_API_URL, get_dubo_key
 from dubo.common import DuboException
+from dubo.config import BASE_API_URL, get_dubo_key
 from dubo.entities import DataResult
+from dubo.query_utils import dispatch_and_retrieve
 
 from dubo.api_client import Client as DuboApiClient
 from dubo.api_client.api.dubo import (
@@ -21,7 +21,6 @@ from dubo.api_client.api.dubo import (
 )
 from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
-    ask_poll_api_v1_dubo_query_retrieve_get,
     create_documentation_api_v1_dubo_documentation_post,
     delete_document_by_id_api_v1_dubo_documentation_delete,
     read_all_api_v1_dubo_documentation_get,
@@ -205,62 +204,6 @@ def chart(
         return deck_to_html(json.dumps(chart), mapbox_key=mapbox_key, **kwargs)
 
     raise ValueError(f"Unknown chart type: {chart_type}")
-
-
-def dispatch_query(query: str, fast: bool = False) -> str:
-    """
-    Dispatch the query and get a tracking_id.
-    """
-    api_key = get_dubo_key()
-    json_body = CreateApiQuery(
-        query_text=query,
-        fast=fast,
-    )
-
-    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
-        client=client,
-        x_dubo_key=api_key,
-        json_body=json_body,
-    )
-    return res.id
-
-
-def retrieve_result(tracking_id: str) -> DataResult:
-    """
-    Poll for the result using the provided tracking_id.
-    """
-    delay = 0.1
-    max_delay = 10
-    api_key = get_dubo_key()
-    while True:
-        res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
-            client=client,
-            x_dubo_key=api_key,
-            dispatch_id=tracking_id,
-        )
-        if res.status == QueryStatus.SUCCESS:
-            return DataResult(
-                id=res.id,
-                query_text=res.query_text,
-                status=res.status,
-                results_set=[
-                    item.additional_properties for item in res.results_set
-                ],
-                row_count=res.row_count,
-            )
-        elif res.status == QueryStatus.FAILED:
-            raise DuboException(res["error"])
-        else:
-            time.sleep(delay)
-            delay = min(delay * 2, max_delay)
-
-
-def dispatch_and_retrieve(query: str, fast: bool = False) -> DataResult:
-    """
-    Convenience function to generate the query and retrieve the result.
-    """
-    tracking_id = dispatch_query(query, fast)
-    return retrieve_result(tracking_id)
 
 
 def query(
