@@ -7,6 +7,7 @@
   * [retrieve\_result](#ask_dubo.retrieve_result)
   * [dispatch\_and\_retrieve](#ask_dubo.dispatch_and_retrieve)
   * [create\_doc](#ask_dubo.create_doc)
+  * [get\_all\_docs](#ask_dubo.get_all_docs)
   * [update\_doc](#ask_dubo.update_doc)
   * [delete\_doc](#ask_dubo.delete_doc)
 
@@ -175,6 +176,27 @@ res = create_doc(
 #     created_at=...,
 #     updated_at=...,
 # )
+```
+
+<a id="ask_dubo.get_all_docs"></a>
+
+## get\_all\_docs
+
+```python
+def get_all_docs() -> List[Dict[str, str]]
+```
+
+Get All Documents.
+
+**Returns**:
+
+The list of documents (file_name and id)
+##### Example
+```python
+from dubo import get_all_docs
+
+res = get_all_docs()
+# > [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
 ```
 
 <a id="ask_dubo.update_doc"></a>

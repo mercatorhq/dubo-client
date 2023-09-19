@@ -380,6 +380,19 @@ def get_doc(data_source_documentation_id: str) -> DataSourceDocument | HTTPValid
 
 
 def get_all_docs() -> List[Dict[str, str]]:
+    """
+    Get All Documents.
+
+    :return: The list of documents (file_name and id)
+
+    ##### Example
+    ```python
+    from dubo import get_all_docs
+
+    res = get_all_docs()
+    # > [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
+    ```
+    """
     api_key = get_dubo_key()
     res = read_all_api_v1_dubo_documentation_get.sync(
         client=client,
