@@ -3,6 +3,7 @@ from .ask_dubo import (
     chart,
     create_doc,
     delete_doc,
+    filter_documentation,
     generate_sql,
     get_all_docs,
     get_doc,
