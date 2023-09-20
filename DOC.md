@@ -1,16 +1,15 @@
 # Dubo SDK
 
-* [ask\_dubo](#ask_dubo)
-  * [ask](#ask_dubo.ask)
-  * [chart](#ask_dubo.chart)
-  * [query](#ask_dubo.query)
-  * [generate\_sql](#ask_dubo.generate_sql)
-  * [search\_tables](#ask_dubo.search_tables)
-  * [create\_doc](#ask_dubo.create_doc)
-  * [get\_doc](#ask_dubo.get_doc)
-  * [get\_all\_docs](#ask_dubo.get_all_docs)
-  * [update\_doc](#ask_dubo.update_doc)
-  * [delete\_doc](#ask_dubo.delete_doc)
+* [ask](#ask_dubo.ask)
+* [chart](#ask_dubo.chart)
+* [query](#ask_dubo.query)
+* [generate\_sql](#ask_dubo.generate_sql)
+* [search\_tables](#ask_dubo.search_tables)
+* [create\_doc](#ask_dubo.create_doc)
+* [get\_doc](#ask_dubo.get_doc)
+* [get\_all\_docs](#ask_dubo.get_all_docs)
+* [update\_doc](#ask_dubo.update_doc)
+* [delete\_doc](#ask_dubo.delete_doc)
 
 <a id="ask_dubo.ask"></a>
 
