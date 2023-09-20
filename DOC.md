@@ -3,6 +3,9 @@
 * [ask\_dubo](#ask_dubo)
   * [ask](#ask_dubo.ask)
   * [chart](#ask_dubo.chart)
+  * [query](#ask_dubo.query)
+  * [generate\_sql](#ask_dubo.generate_sql)
+  * [search\_tables](#ask_dubo.search_tables)
   * [create\_doc](#ask_dubo.create_doc)
   * [get\_doc](#ask_dubo.get_doc)
   * [get\_all\_docs](#ask_dubo.get_all_docs)
@@ -80,12 +83,13 @@ from dubo.api_client.models import ChartType
 
 housing_df = pd.read_csv("https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv")
 
-res = chart(
+chart(
     query="Map the houses",
     df=housing_df,
     specify_chart_type=ChartType.DECK_GL,
     as_string=True,
 )
+
 # <!DOCTYPE html>
 #    <html>
 #    ...
@@ -96,6 +100,110 @@ res = chart(
 #    <script>
 #        const container = document.getElementById('deck-container');
 #        ...
+```
+
+<a id="ask_dubo.query"></a>
+
+## query
+
+```python
+def query(query_text: str, fast: bool = False) -> DataResult
+```
+
+Ask Dubo a question.
+
+**Arguments**:
+
+- `query_text` (`str`): The question to ask Dubo.
+- `fast` (`bool`): Use faster, less accurate model
+
+**Returns**:
+
+The SQL query.
+##### Example
+```python
+from dubo import query
+
+query("How many area types are there?")
+
+# DataResult(
+#  id='query-56513883-6749-4f2b-ad57-7bb8cb350161',
+#  query_text='How many area types are there?',
+#  status=QueryStatus.SUCCESS,
+#  results_set=[{'count': 9}],
+#  row_count=1
+# )
+```
+
+<a id="ask_dubo.generate_sql"></a>
+
+## generate\_sql
+
+```python
+def generate_sql(query_text: str, fast: bool = False) -> str
+```
+
+Ask Dubo to generate a SQL query.
+
+**Arguments**:
+
+- `query_text` (`str`): The plain text query.
+- `fast` (`bool`): Use faster, less accurate model
+
+**Returns**:
+
+The SQL query.
+##### Example
+```python
+from dubo import query
+
+query("How many area types are there?")
+
+# "SELECT COUNT(DISTINCT type) AS num_area_types FROM public.area"
+```
+
+<a id="ask_dubo.search_tables"></a>
+
+## search\_tables
+
+```python
+def search_tables(query_text: str, fast: bool = False) -> List[AttenuatedDDL]
+```
+
+Ask Dubo to return the list of tables that are a potential match for this query.
+
+**Arguments**:
+
+- `query_text` (`str`): The plain text query.
+- `fast` (`bool`): Use faster, less accurate model
+
+**Returns**:
+
+The list of tables.
+##### Example
+```python
+from dubo import query
+
+query("How many area types are there?")
+
+# [
+#   AttenuatedDDL(
+#      cols=[
+#          TableColumn(column_name='name', data_type='character varying', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#          TableColumn(column_name='parent', data_type='integer', is_nullable=True, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#          TableColumn(column_name='description', data_type='text', is_nullable=True, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#          TableColumn(column_name='gid', data_type='uuid', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#          TableColumn(column_name='id', data_type='integer', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#          TableColumn(column_name='child_order', data_type='integer', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+#      ],
+#      table_name='area_type',
+#      schema_name='public',
+#      id='e3e10474-aa55-4654-bfb8-6592dc540127',
+#      database_name='postgres',
+#      description='Table storing different types of areas, including their parent-child relationships and descriptions',
+#   ),
+#  ...
+# ]
 ```
 
 <a id="ask_dubo.create_doc"></a>
@@ -121,28 +229,21 @@ Create Documentation.
 The documentation
 ##### Example
 ```python
-from dubo import update_doc
+from dubo import create_doc
 
-update_doc(
-    data_source_documentation_id=res.id,
+create_doc(
     file_path="./documentation.txt",
     shingle_length=1000,
     step=500,
 )
-# > True
 
-res = create_doc(
-    file_path="./documentation.txt",
-    shingle_length=1000,
-    step=500,
-)
-# > DataSourceDocument(
-#     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
-#     file_name='documentation.txt',
-#     data_source_id=...,
-#     organization_id=...,
-#     created_at=...,
-#     updated_at=...,
+# DataSourceDocument(
+#   id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+#   file_name='documentation.txt',
+#   data_source_id=...,
+#   organization_id=...,
+#   created_at=...,
+#   updated_at=...,
 # )
 ```
 
@@ -165,16 +266,17 @@ Get one document by ID.
 The document
 ##### Example
 ```python
-from dubo import get_all_docs
+from dubo import get_doc
 
-res = get_all_docs()
-# > DataSourceDocument(
-#     id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
-#     file_name='documentation.txt',
-#     data_source_id=...,
-#     organization_id=...,
-#     created_at=...,
-#     updated_at=...,
+get_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
+
+# DataSourceDocument(
+#   id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+#   file_name='documentation.txt',
+#   data_source_id=...,
+#   organization_id=...,
+#   created_at=...,
+#   updated_at=...,
 # )
 ```
 
@@ -195,8 +297,9 @@ The list of documents (file_name and id)
 ```python
 from dubo import get_all_docs
 
-res = get_all_docs()
-# > [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
+get_all_docs()
+
+# [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
 ```
 
 <a id="ask_dubo.update_doc"></a>
@@ -232,7 +335,8 @@ update_doc(
     shingle_length=1000,
     step=500,
 )
-# > True
+
+# True
 ```
 
 <a id="ask_dubo.delete_doc"></a>
@@ -257,6 +361,7 @@ True if the deletion was successful, False otherwise
 from dubo import delete_doc
 
 delete_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
-# > True
+
+# True
 ```
 
