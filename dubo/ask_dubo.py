@@ -34,6 +34,7 @@ from dubo.api_client.api.sdk import (
     get_query_execution_category_v1_dubo_categorize_chart_get
 )
 from dubo.api_client.models import *
+from dubo.api_client.models.matched_doc import MatchedDoc
 
 
 client = DuboApiClient(base_url=BASE_API_URL)
@@ -269,7 +270,7 @@ def filter_documentation(
     data_source_documentation_id: Optional[str] = None,
     page_number: int = 1,
     page_size: int = 25,
-) -> List[dict]:
+) -> List[MatchedDoc]:
     api_key = get_dubo_key()
 
     res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(

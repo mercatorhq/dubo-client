@@ -14,7 +14,8 @@ from .dubo_chart_query_chart_spec import DuboChartQueryChartSpec
 from .dubo_chart_query_data_snippet_item import DuboChartQueryDataSnippetItem
 from .dubo_example import DuboExample
 from .http_validation_error import HTTPValidationError
-from .page import Page
+from .matched_doc import MatchedDoc
+from .page_matched_doc import PageMatchedDoc
 from .query_response import QueryResponse
 from .query_status import QueryStatus
 from .table_column import TableColumn
@@ -35,7 +36,8 @@ __all__ = (
     "DuboChartQueryDataSnippetItem",
     "DuboExample",
     "HTTPValidationError",
-    "Page",
+    "MatchedDoc",
+    "PageMatchedDoc",
     "QueryResponse",
     "QueryStatus",
     "TableColumn",
