@@ -23,6 +23,7 @@ from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
     create_documentation_api_v1_dubo_documentation_post,
     delete_document_by_id_api_v1_dubo_documentation_delete,
+    filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get,
     read_all_api_v1_dubo_documentation_get,
     read_one_api_v1_dubo_documentation_data_source_documentation_id_get,
     update_document_api_v1_dubo_documentation_put,
@@ -33,6 +34,7 @@ from dubo.api_client.api.sdk import (
 )
 from dubo.api_client.models import *
 from dubo.api_client.types import *
+from dubo.api_client.models.matched_doc import MatchedDoc
 
 
 client = DuboApiClient(base_url=BASE_API_URL)
@@ -326,6 +328,26 @@ def search_tables(
         json_body=body,
     )
     return res.tables
+
+
+def filter_documentation(
+    user_query: str,
+    data_source_documentation_id: Optional[str] = None,
+    page_number: int = 1,
+    page_size: int = 25,
+) -> List[MatchedDoc]:
+    api_key = get_dubo_key()
+
+    res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(
+        client=client,
+        x_dubo_key=api_key,
+        user_query=user_query,
+        data_source_documentation_id=data_source_documentation_id,
+        page_number=page_number,
+        page_size=page_size,
+    )
+
+    return res.data
 
 
 def create_doc(

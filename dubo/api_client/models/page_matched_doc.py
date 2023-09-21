@@ -1,27 +1,35 @@
-from typing import Any, Dict, List, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar, Union
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="Page")
+if TYPE_CHECKING:
+    from ..models.matched_doc import MatchedDoc
+
+
+T = TypeVar("T", bound="PageMatchedDoc")
 
 
 @_attrs_define
-class Page:
+class PageMatchedDoc:
     """
     Attributes:
-        data (List[Any]):
+        data (List['MatchedDoc']):
         next_page (Union[Unset, int]):
     """
 
-    data: List[Any]
+    data: List["MatchedDoc"]
     next_page: Union[Unset, int] = UNSET
     additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-        data = self.data
+        data = []
+        for data_item_data in self.data:
+            data_item = data_item_data.to_dict()
+
+            data.append(data_item)
 
         next_page = self.next_page
 
@@ -39,18 +47,25 @@ class Page:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.matched_doc import MatchedDoc
+
         d = src_dict.copy()
-        data = cast(List[Any], d.pop("data"))
+        data = []
+        _data = d.pop("data")
+        for data_item_data in _data:
+            data_item = MatchedDoc.from_dict(data_item_data)
+
+            data.append(data_item)
 
         next_page = d.pop("next_page", UNSET)
 
-        page = cls(
+        page_matched_doc = cls(
             data=data,
             next_page=next_page,
         )
 
-        page.additional_properties = d
-        return page
+        page_matched_doc.additional_properties = d
+        return page_matched_doc
 
     @property
     def additional_keys(self) -> List[str]:

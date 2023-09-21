@@ -22,7 +22,7 @@ class DuboChartQuery:
         data_snippet (List['DuboChartQueryDataSnippetItem']):
         fast (Union[Unset, bool]): Use faster less accurate model
         chart_spec (Union[Unset, DuboChartQueryChartSpec]):
-        chart_type (Union[Unset, ChartType]): An enumeration. Default: ChartType.DECK_GL.
+        chart_type (Union[Unset, ChartType]): An enumeration. Default: ChartType.VEGA_LITE.
         thread_id (Union[Unset, str]):
     """
 
@@ -30,7 +30,7 @@ class DuboChartQuery:
     data_snippet: List["DuboChartQueryDataSnippetItem"]
     fast: Union[Unset, bool] = False
     chart_spec: Union[Unset, "DuboChartQueryChartSpec"] = UNSET
-    chart_type: Union[Unset, ChartType] = ChartType.DECK_GL
+    chart_type: Union[Unset, ChartType] = ChartType.VEGA_LITE
     thread_id: Union[Unset, str] = UNSET
     additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
