@@ -5,6 +5,7 @@
 * [query](#ask_dubo.query)
 * [generate\_sql](#ask_dubo.generate_sql)
 * [search\_tables](#ask_dubo.search_tables)
+* [filter\_documentation](#ask_dubo.filter_documentation)
 * [create\_doc](#ask_dubo.create_doc)
 * [get\_doc](#ask_dubo.get_doc)
 * [get\_all\_docs](#ask_dubo.get_all_docs)
@@ -203,6 +204,46 @@ query("How many area types are there?")
 #   ),
 #  ...
 # ]
+```
+
+<a id="ask_dubo.filter_documentation"></a>
+
+## filter\_documentation
+
+```python
+def filter_documentation(user_query: str,
+                         data_source_documentation_id: Optional[str] = None,
+                         page_number: int = 1,
+                         page_size: int = 25) -> List[MatchedDoc]
+```
+
+Search in documentation
+
+**Arguments**:
+
+- `user_query` (`str`): The search query.
+- `data_source_documentation_id` (`str, optional`): The documentation id.
+- `page_number` (`int, optional`): The page number.
+- `page_size` (`int, optional`): The page size.
+
+**Returns**:
+
+The list of results (paginated): body, score and matched_doc_id (datasource id)
+##### Example
+```python
+from dubo import filter_documentation
+
+res = filter_documentation(
+    user_query="describe the area type table",
+    data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+    page_number=1,
+    page_size=10,
+)
+# [ MatchedDoc(
+#    body='The area_type table contains the list of area types',
+#    score=0.947,
+#    matched_doc_id='2be09019-8d48-49a0-aeb0-4837a57e444c'
+#  ), ...]
 ```
 
 <a id="ask_dubo.create_doc"></a>

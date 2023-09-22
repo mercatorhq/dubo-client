@@ -336,6 +336,36 @@ def filter_documentation(
     page_number: int = 1,
     page_size: int = 25,
 ) -> List[MatchedDoc]:
+    """
+    Search in documentation
+
+    :param user_query: The search query.
+    :param data_source_documentation_id: The documentation id.
+    :param page_number: The page number.
+    :param page_size: The page size.
+    :type user_query: str
+    :type data_source_documentation_id: str, optional
+    :type page_number: int, optional
+    :type page_size: int, optional
+    :return: The list of results (paginated): body, score and matched_doc_id (datasource id)
+
+    ##### Example
+    ```python
+    from dubo import filter_documentation
+
+    res = filter_documentation(
+        user_query="describe the area type table",
+        data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+        page_number=1,
+        page_size=10,
+    )
+    # [ MatchedDoc(
+    #    body='The area_type table contains the list of area types',
+    #    score=0.947,
+    #    matched_doc_id='2be09019-8d48-49a0-aeb0-4837a57e444c'
+    #  ), ...]
+    ```
+    """
     api_key = get_dubo_key()
 
     res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(
