@@ -23,7 +23,7 @@ pylint = "^2.15.9"
 jupyterlite = {version = "^0.1.0b17", allow-prereleases = true}
 jupyterlab-server = "^2.18.0"
 vcrpy = "^5.1.0"
-openapi-python-client = {git = "git@github.com:openapi-generators/openapi-python-client.git", branch = "openapi-3.1"}
+#openapi-python-client = {git = "git@github.com:openapi-generators/openapi-python-client.git", branch = "openapi-3.1"}
 pydoc-markdown = "^4.8.2"
 
 [build-system]
