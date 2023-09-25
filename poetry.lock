@@ -1531,7 +1531,7 @@ attrs = ">=21.3.0"
 autoflake = "^1.4 || ^2.0.0"
 black = ">=23"
 colorama = {version = "^0.4.3", markers = "sys_platform == \"win32\""}
-httpx = ">=0.20.0,<0.25.0"
+httpx = ">=0.20.0,<0.26.0"
 isort = "^5.0.5"
 jinja2 = "^3.0.0"
 pydantic = "^2.1.1"
@@ -1542,9 +1542,9 @@ typer = ">0.6, <0.10"
 
 [package.source]
 type = "git"
-url = "git@github.com:staticdev/openapi-python-client.git"
-reference = "feature/enable-openapi-3.1.0"
-resolved_reference = "7f920845f2f7c6860eab4400adbc6bb501aa5ae0"
+url = "https://github.com/openapi-generators/openapi-python-client.git"
+reference = "openapi-3.1"
+resolved_reference = "5181c9b1455a8c32dc2c677139318b1beb7b1303"
 
 [[package]]
 name = "overrides"
@@ -2962,4 +2962,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "fee451825ed5686bb76886f79afaf52d8513f3130380aad0a9b612fc8c6992b1"
+content-hash = "773094bba1db48726a6d1eef2bcdb7ae54f925586bfa8ebbfbd44f24e568a83d"
