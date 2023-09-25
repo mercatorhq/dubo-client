@@ -9,7 +9,7 @@ from dubo.api_client.api.enterprise import (
 from dubo.api_client.models import *
 from dubo.common import DuboException
 
-from dubo.config import get_dubo_key
+from dubo.config import get_dubo_key, RETRIEVE_RESULT_MAX_DELAY
 from dubo.entities import DataResult
 
 
@@ -41,7 +41,7 @@ def retrieve_result(
     Poll for the result using the provided tracking_id.
     """
     delay = 0.1
-    max_delay = 10
+    max_delay = RETRIEVE_RESULT_MAX_DELAY
     api_key = get_dubo_key()
     while True:
         res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
