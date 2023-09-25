@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import List
 
+from dubo.api_client.models import QueryStatus
+
 
 @dataclass
 class DataResult:
     id: str
     query_text: str
-    status: str
+    status: QueryStatus
     results_set: List[dict]
     row_count: int
 
@@ -18,8 +20,3 @@ class DataResult:
         ]:
             return False
         return True
-
-
-class ChartType(str):
-    VEGA_LITE = "vega_lite"
-    DECK_GL = "deck_gl"

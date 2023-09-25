@@ -3,7 +3,6 @@
 from dotenv import load_dotenv
 import os
 
-from dubo import __version__
 from dubo.common import DuboException
 
 load_dotenv()

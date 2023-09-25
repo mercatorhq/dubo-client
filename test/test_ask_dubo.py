@@ -2,7 +2,7 @@ import pandas as pd
 import vcr
 
 from dubo import ask, chart, query as dubo_query
-from dubo.entities import ChartType
+from dubo.api_client.models import ChartType
 from dubo.ask_dubo import generate_sql, search_tables
 
 # Constants

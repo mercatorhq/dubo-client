@@ -6,6 +6,7 @@ from .attenuated_ddl import AttenuatedDDL
 from .body_create_documentation_api_v1_dubo_documentation_post import BodyCreateDocumentationApiV1DuboDocumentationPost
 from .body_read_query_v1_dubo_query_get import BodyReadQueryV1DuboQueryGet
 from .body_update_document_api_v1_dubo_documentation_put import BodyUpdateDocumentApiV1DuboDocumentationPut
+from .chart_type import ChartType
 from .create_api_query import CreateApiQuery
 from .create_api_query_mode import CreateApiQueryMode
 from .data_source_document import DataSourceDocument
@@ -28,6 +29,7 @@ __all__ = (
     "BodyCreateDocumentationApiV1DuboDocumentationPost",
     "BodyReadQueryV1DuboQueryGet",
     "BodyUpdateDocumentApiV1DuboDocumentationPut",
+    "ChartType",
     "CreateApiQuery",
     "CreateApiQueryMode",
     "DataSourceDocument",

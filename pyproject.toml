@@ -24,6 +24,7 @@ jupyterlite = {version = "^0.1.0b17", allow-prereleases = true}
 jupyterlab-server = "^2.18.0"
 vcrpy = "^5.1.0"
 openapi-python-client = {git = "git@github.com:staticdev/openapi-python-client.git", branch = "feature/enable-openapi-3.1.0"}
+pydoc-markdown = "^4.8.2"
 
 [build-system]
 requires = ["poetry-core"]

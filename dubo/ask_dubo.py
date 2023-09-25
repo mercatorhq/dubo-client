@@ -4,16 +4,16 @@ from http import HTTPStatus
 from uuid import UUID
 
 import sqlite3
-import time
-from typing import Any, Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type
 
 import pandas as pd
 import altair as alt
 from pydeck.io.html import deck_to_html
-from dubo.common import DuboException
 
+from dubo.common import DuboException
 from dubo.config import BASE_API_URL, get_dubo_key
-from dubo.entities import DataResult, ChartType
+from dubo.entities import DataResult
+from dubo.query_utils import dispatch_and_retrieve
 
 from dubo.api_client import Client as DuboApiClient
 from dubo.api_client.api.dubo import (
@@ -21,7 +21,6 @@ from dubo.api_client.api.dubo import (
 )
 from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
-    ask_poll_api_v1_dubo_query_retrieve_get,
     create_documentation_api_v1_dubo_documentation_post,
     delete_document_by_id_api_v1_dubo_documentation_delete,
     filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get,
@@ -34,6 +33,7 @@ from dubo.api_client.api.sdk import (
     get_query_execution_category_v1_dubo_categorize_chart_get
 )
 from dubo.api_client.models import *
+from dubo.api_client.types import *
 from dubo.api_client.models.matched_doc import MatchedDoc
 
 
@@ -53,19 +53,22 @@ def ask(
     :param query: The question to ask Dubo.
     :param data: The DataFrame to ask Dubo about.
     :param verbose: Whether to print the query that Dubo is running.
+    :param rtype: Expected returned type.
     :param column_descriptions: A dictionary of column names to descriptions.
+    :type query: str
+    :type rtype: pd.DataFrame or list
+    :return: The result of the query.
 
-    # Example
+    ##### Example
     ```python
     import pandas as pd
     from dubo import ask
 
-    df = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
-    ask('What is the sum of a?', df)
-    > [(6,)]
+    data = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    ask('What is the sum of a?', data, rtype=list)
+
+    # [(6,)]
     ```
-    :return The result of the query.
-    :type query: str
     """
     conn = sqlite3.connect(":memory:")
 
@@ -116,6 +119,47 @@ def chart(
     verbose=False,
     **kwargs,
 ):
+    """
+    Ask Dubo to generate a chart.
+
+    :param query: The chart to ask Dubo to generate.
+    :param df: The DataFrame for the chart.
+    :param specify_chart_type: Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
+    :param verbose: Whether to print verbose logs.
+    :type query: str
+    :type df: pd.DataFrame
+    :type specify_chart_type: ChartType | None
+    :type verbose: bool
+    :return: The chart.
+
+    ##### Example
+    ```python
+    import pandas as pd
+
+    from dubo import chart
+    from dubo.api_client.models import ChartType
+
+    housing_df = pd.read_csv("https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv")
+
+    chart(
+        query="Map the houses",
+        df=housing_df,
+        specify_chart_type=ChartType.DECK_GL,
+        as_string=True,
+    )
+
+    # <!DOCTYPE html>
+    #    <html>
+    #    ...
+    #    <body>
+    #        <div id="deck-container">
+    #        </div>
+    #    </body>
+    #    <script>
+    #        const container = document.getElementById('deck-container');
+    #        ...
+    ```
+    """
     chart_type: ChartType | None = specify_chart_type
     if not chart_type:
         chart_type = get_query_execution_category_v1_dubo_categorize_chart_get.sync(
@@ -139,7 +183,7 @@ def chart(
             user_query=query,
             data_snippet=data_snippet,
             fast=False,
-            chart_type=chart_type.lower()
+            chart_type=chart_type,
         ),
     )
 
@@ -165,77 +209,63 @@ def chart(
     raise ValueError(f"Unknown chart type: {chart_type}")
 
 
-def dispatch_query(query: str, fast: bool = False) -> str:
-    """
-    Dispatch the query and get a tracking_id.
-    """
-    api_key = get_dubo_key()
-    json_body = CreateApiQuery(
-        query_text=query,
-        fast=fast,
-    )
-
-    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
-        client=client,
-        x_dubo_key=api_key,
-        json_body=json_body,
-    )
-    return res.id
-
-
-def retrieve_result(tracking_id: str) -> DataResult:
-    """
-    Poll for the result using the provided tracking_id.
-    """
-    delay = 0.1
-    max_delay = 10
-    api_key = get_dubo_key()
-    while True:
-        res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
-            client=client,
-            x_dubo_key=api_key,
-            dispatch_id=tracking_id,
-        )
-        if res.status == QueryStatus.SUCCESS:
-            return DataResult(
-                id=res.id,
-                query_text=res.query_text,
-                status=res.status,
-                results_set=[
-                    item.additional_properties for item in res.results_set
-                ],
-                row_count=res.row_count,
-            )
-        elif res.status == QueryStatus.FAILED:
-            raise DuboException(res["error"])
-        else:
-            time.sleep(delay)
-            delay = min(delay * 2, max_delay)
-
-
-def dispatch_and_retrieve(query: str, fast: bool = False) -> DataResult:
-    """
-    Convenience function to generate the query and retrieve the result.
-    """
-    tracking_id = dispatch_query(query, fast)
-    return retrieve_result(tracking_id)
-
-
 def query(
-    payload: str,
+    query_text: str,
     fast: bool = False,
 ) -> DataResult:
+    """
+    Ask Dubo a question.
+
+    :param query_text: The question to ask Dubo.
+    :param fast: Use faster, less accurate model
+    :type query_text: str
+    :type fast: bool
+    :return: The SQL query.
+
+    ##### Example
+    ```python
+    from dubo import query
+
+    query("How many area types are there?")
+
+    # DataResult(
+    #  id='query-56513883-6749-4f2b-ad57-7bb8cb350161',
+    #  query_text='How many area types are there?',
+    #  status=QueryStatus.SUCCESS,
+    #  results_set=[{'count': 9}],
+    #  row_count=1
+    # )
+    ```
+    """
     get_dubo_key()
-    return dispatch_and_retrieve(payload, fast)
+    return dispatch_and_retrieve(client, query_text, fast)
 
 
 def generate_sql(
-    payload: str,
+    query_text: str,
     fast: bool = False,
 ) -> str:
+    """
+    Ask Dubo to generate a SQL query.
+
+    :param query_text: The plain text query.
+    :param fast: Use faster, less accurate model
+    :type query_text: str
+    :type fast: bool
+    :return: The SQL query.
+
+    ##### Example
+    ```python
+    from dubo import query
+
+    query("How many area types are there?")
+
+    # "SELECT COUNT(DISTINCT type) AS num_area_types FROM public.area"
+    ```
+    """
     api_key = get_dubo_key()
     body = CreateApiQuery(
-        query_text=payload,
+        query_text=query_text,
         fast=fast,
         mode=CreateApiQueryMode.JUST_SQL_TEXT,
     )
@@ -248,12 +278,47 @@ def generate_sql(
 
 
 def search_tables(
-    payload: str,
+    query_text: str,
     fast: bool = False,
 ) -> List[AttenuatedDDL]:
+    """
+    Ask Dubo to return the list of tables that are a potential match for this query.
+
+    :param query_text: The plain text query.
+    :param fast: Use faster, less accurate model
+    :type query_text: str
+    :type fast: bool
+    :return: The list of tables.
+
+    ##### Example
+    ```python
+    from dubo import query
+
+    query("How many area types are there?")
+
+    # [
+    #   AttenuatedDDL(
+    #      cols=[
+    #          TableColumn(column_name='name', data_type='character varying', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #          TableColumn(column_name='parent', data_type='integer', is_nullable=True, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #          TableColumn(column_name='description', data_type='text', is_nullable=True, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #          TableColumn(column_name='gid', data_type='uuid', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #          TableColumn(column_name='id', data_type='integer', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #          TableColumn(column_name='child_order', data_type='integer', is_nullable=False, table_name='area_type', schema_name='public', is_partitioning_column=None),
+    #      ],
+    #      table_name='area_type',
+    #      schema_name='public',
+    #      id='e3e10474-aa55-4654-bfb8-6592dc540127',
+    #      database_name='postgres',
+    #      description='Table storing different types of areas, including their parent-child relationships and descriptions',
+    #   ),
+    #  ...
+    # ]
+    ```
+    """
     api_key = get_dubo_key()
     body = CreateApiQuery(
-        query_text=payload,
+        query_text=query_text,
         fast=fast,
         mode=CreateApiQueryMode.JUST_TABLES,
     )
@@ -271,6 +336,36 @@ def filter_documentation(
     page_number: int = 1,
     page_size: int = 25,
 ) -> List[MatchedDoc]:
+    """
+    Search in documentation
+
+    :param user_query: The search query.
+    :param data_source_documentation_id: The documentation id.
+    :param page_number: The page number.
+    :param page_size: The page size.
+    :type user_query: str
+    :type data_source_documentation_id: str, optional
+    :type page_number: int, optional
+    :type page_size: int, optional
+    :return: The list of results (paginated): body, score and matched_doc_id (datasource id)
+
+    ##### Example
+    ```python
+    from dubo import filter_documentation
+
+    res = filter_documentation(
+        user_query="describe the area type table",
+        data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+        page_number=1,
+        page_size=10,
+    )
+    # [ MatchedDoc(
+    #    body='The area_type table contains the list of area types',
+    #    score=0.947,
+    #    matched_doc_id='2be09019-8d48-49a0-aeb0-4837a57e444c'
+    #  ), ...]
+    ```
+    """
     api_key = get_dubo_key()
 
     res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(
@@ -286,36 +381,118 @@ def filter_documentation(
 
 
 def create_doc(
-    file: Any,
+    file_path: str,
     shingle_length: int = 1000,
     step: int = 500,
-) -> DataSourceDocument | HTTPValidationError:
-    api_key = get_dubo_key()
-    body = BodyCreateDocumentationApiV1DuboDocumentationPost(
-        file=file,
+) -> DataSourceDocument:
+    """
+    Create Documentation.
+
+    :param file_path: The path to the file to upload.
+    :param shingle_length: TBC.
+    :param step: TBC.
+    :return: The documentation
+
+    ##### Example
+    ```python
+    from dubo import create_doc
+
+    create_doc(
+        file_path="./documentation.txt",
+        shingle_length=1000,
+        step=500,
     )
 
-    res = create_documentation_api_v1_dubo_documentation_post.sync(
-        client=client,
-        x_dubo_key=api_key,
-        multipart_data=body,
-        shingle_length=shingle_length,
-        step=step,
-    )
-
-    return res
-
-
-def get_doc(data_source_documentation_id: str) -> DataSourceDocument | HTTPValidationError | None:
+    # DataSourceDocument(
+    #   id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+    #   file_name='documentation.txt',
+    #   data_source_id=...,
+    #   organization_id=...,
+    #   created_at=...,
+    #   updated_at=...,
+    # )
+    ```
+    """
     api_key = get_dubo_key()
-    return read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync(
+
+    with open(file_path, "rb") as doc:
+        file_name = os.path.basename(file_path)
+        file = File(
+            payload=doc,
+            file_name=file_name,
+        )
+
+        body = BodyCreateDocumentationApiV1DuboDocumentationPost(file)
+
+        res = create_documentation_api_v1_dubo_documentation_post.sync_detailed(
+            client=client,
+            x_dubo_key=api_key,
+            multipart_data=body,
+            shingle_length=shingle_length,
+            step=step,
+        )
+
+        if res.status_code == HTTPStatus.OK:
+            return res.parsed
+        else:
+            raise DuboException(
+                f"Documentation create failed with status code {res.status_code}: {res.content.decode('utf-8')}"
+            )
+
+
+def get_doc(data_source_documentation_id: str) -> DataSourceDocument:
+    """
+    Get one document by ID.
+
+    :param data_source_documentation_id: The ID of the document to get.
+    :return: The document
+
+    ##### Example
+    ```python
+    from dubo import get_doc
+
+    get_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
+
+    # DataSourceDocument(
+    #   id='c1d62c33-4561-4b5f-b2c2-e0203cee1f7b',
+    #   file_name='documentation.txt',
+    #   data_source_id=...,
+    #   organization_id=...,
+    #   created_at=...,
+    #   updated_at=...,
+    # )
+    ```
+    """
+    api_key = get_dubo_key()
+    res = read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync_detailed(
         client=client,
         data_source_documentation_id=data_source_documentation_id,
         x_dubo_key=api_key,
     )
 
+    if res.status_code == HTTPStatus.OK:
+        return res.parsed
+    else:
+        raise DuboException(
+            f"Documentation get failed with status code {res.status_code}: {res.content.decode('utf-8')}"
+        )
+
 
 def get_all_docs() -> List[Dict[str, str]]:
+    """
+    Get All Documents.
+
+    :return: The list of documents (file_name and id)
+
+    ##### Example
+    ```python
+    from dubo import get_all_docs
+
+    get_all_docs()
+
+    # [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
+    ```
+    """
     api_key = get_dubo_key()
     res = read_all_api_v1_dubo_documentation_get.sync(
         client=client,
@@ -336,9 +513,37 @@ def update_doc(
     shingle_length: int = 1000,
     step: int = 500,
 ) -> bool:
+    """
+    Update Document.
+
+    :param data_source_documentation_id: The ID of the document to update.
+    :param file_path: The path to the file to upload.
+    :param shingle_length: TBC.
+    :param step: TBC.
+    :return: True if successful, False otherwise
+
+    ##### Example
+    ```python
+    from dubo import update_doc
+
+    update_doc(
+        data_source_documentation_id="c1d62c33-4561-4b5f-b2c2-e0203cee1f7b",
+        file_path="./documentation.txt",
+        shingle_length=1000,
+        step=500,
+    )
+
+    # True
+    ```
+    """
     api_key = get_dubo_key()
 
-    with open(file_path, "rb") as file:
+    with open(file_path, "rb") as doc:
+        file_name = os.path.basename(file_path)
+        file = File(
+            payload=doc,
+            file_name=file_name,
+        )
         body = BodyUpdateDocumentApiV1DuboDocumentationPut(
             file=file,
         )
@@ -363,11 +568,17 @@ def delete_doc(data_source_documentation_id: str) -> bool:
     """
     Delete a document by its ID.
 
-    Parameters:
-        documentation_id (str): The ID of the document to delete.
+    :param data_source_documentation_id: The ID of the document to delete.
+    :return: True if the deletion was successful, False otherwise
 
-    Returns:
-        bool: True if the deletion was successful, False otherwise.
+    ##### Example
+    ```python
+    from dubo import delete_doc
+
+    delete_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
+
+    # True
+    ```
     """
     # No need to fetch by name, just use the provided ID directly.
     api_key = get_dubo_key()

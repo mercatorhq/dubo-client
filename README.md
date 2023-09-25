@@ -14,3 +14,9 @@ just generate-api-client
 ```
 
 More info can be found in the README file inside the `api-client-generator` folder.
+
+## Generate Documentation
+
+```shell
+just generate-doc
+```
