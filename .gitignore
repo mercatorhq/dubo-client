@@ -157,7 +157,7 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+.idea/
 _output/*
 .jupyterlite.doit.db
 ignore__*
@@ -166,3 +166,7 @@ ignore__*
 .*.swn
 .DS_Store
 docs/notebooks/testing.ipynb
+
+# API client
+/api-client-generator/openapi.json
+/api-client-generator/dubo-api-client

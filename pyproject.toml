@@ -12,14 +12,18 @@ pandas = "^1.0.0"
 altair = "^5.0.1"
 pydeck = "^0.8.0"
 python-dotenv = "^1.0.0"
+httpx = ">=0.20.0,<0.25.0"
+attrs = ">=21.3.0"
+python-dateutil = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
-black = "^22.12.0"
+black = "^23.3.0"
 pylint = "^2.15.9"
 jupyterlite = {version = "^0.1.0b17", allow-prereleases = true}
 jupyterlab-server = "^2.18.0"
 vcrpy = "^5.1.0"
+openapi-python-client = {git = "git@github.com:staticdev/openapi-python-client.git", branch = "feature/enable-openapi-3.1.0"}
 
 [build-system]
 requires = ["poetry-core"]

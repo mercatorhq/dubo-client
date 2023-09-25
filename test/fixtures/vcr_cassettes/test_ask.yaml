@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '2'
+      content-type:
+      - application/json
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+    method: GET
+    uri: https://api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20A%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
+  response:
+    content: '{"query_text":"SELECT SUM(a) FROM tbl_0"}'
+    headers:
+      Connection:
+      - Close
+      Content-Length:
+      - '41'
+      content-type:
+      - application/json
+      date:
+      - Tue, 12 Sep 2023 08:26:03 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: '{}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '2'
+      content-type:
+      - application/json
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+    method: GET
+    uri: https://api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20a%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
+  response:
+    content: '{"query_text":"SELECT SUM(a) FROM tbl_0"}'
+    headers:
+      Connection:
+      - Close
+      Content-Length:
+      - '41'
+      content-type:
+      - application/json
+      date:
+      - Tue, 12 Sep 2023 08:26:04 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
