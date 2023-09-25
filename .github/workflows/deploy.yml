@@ -25,5 +25,8 @@ jobs:
         run: poetry install
       - name: Run Tests
         run: poetry run pytest
+        env:
+          DUBO_API_KEY: "pk.test-api-key"
+          DUBO_BASE_URL: "https://api.dubo.gg"
       - name: Build
         run: poetry build
