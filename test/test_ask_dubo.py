@@ -104,7 +104,7 @@ def test_query_filter_documentation():
 @myvcr.use_cassette("test_create_doc.yaml")
 def test_create_doc():
     doc = create_doc(
-        file_path="./test/fixtures/doc.txt",
+        file_path="./test/fixtures/docs/doc.txt",
         shingle_length=100,
         step=50,
     )
@@ -117,6 +117,19 @@ def test_create_doc():
         updated_at=datetime.fromisoformat('2023-09-26T02:07:36'),
     )
     assert doc == expected_doc
+
+
+@myvcr.use_cassette("test_create_doc_invalid_file.yaml")
+def test_create_doc_invalid_file_raises_dubo_exception():
+    with pytest.raises(DuboException) as exception:
+        create_doc(
+            file_path="./test/fixtures/docs/invalid_doc",
+            shingle_length=100,
+            step=50,
+        )
+
+    # TODO return 400 + better description
+    assert exception.value.msg == 'Documentation create failed with status code 500: Internal Server Error'
 
 
 @myvcr.use_cassette("test_get_doc.yaml")
@@ -155,7 +168,7 @@ def test_get_all_docs():
 def test_update_doc():
     result = update_doc(
         data_source_documentation_id="e0dba56c-3531-48d3-ac3d-bf0447ca4e0a",
-        file_path="./test/fixtures/updated_doc.txt",
+        file_path="./test/fixtures/docs/updated_doc.txt",
         shingle_length=150,
         step=75,
     )
