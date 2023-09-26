@@ -166,13 +166,13 @@ def test_get_all_docs():
 
 @myvcr.use_cassette("test_update_doc.yaml")  # type: ignore
 def test_update_doc():
-    result = update_doc(
+    updated = update_doc(
         data_source_documentation_id="e0dba56c-3531-48d3-ac3d-bf0447ca4e0a",
         file_path="./test/fixtures/docs/updated_doc.txt",
         shingle_length=150,
         step=75,
     )
-    assert result
+    assert updated
 
     doc = get_doc("e0dba56c-3531-48d3-ac3d-bf0447ca4e0a")
     assert doc.file_name == "updated_doc.txt"
@@ -180,8 +180,8 @@ def test_update_doc():
 
 @myvcr.use_cassette("test_delete_doc.yaml")  # type: ignore
 def test_delete_doc():
-    result = delete_doc("e0dba56c-3531-48d3-ac3d-bf0447ca4e0a")
-    assert result
+    deleted = delete_doc("e0dba56c-3531-48d3-ac3d-bf0447ca4e0a")
+    assert deleted
 
     # Verify the document was indeed deleted
     with pytest.raises(DuboException) as exception:
