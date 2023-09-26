@@ -57,7 +57,7 @@ ask('What is the sum of a?', data, rtype=list)
 ```python
 def chart(query: str,
           df: pd.DataFrame,
-          specify_chart_type: ChartType | None = None,
+          chart_type: ChartType | None = None,
           verbose=False,
           **kwargs)
 ```
@@ -68,7 +68,7 @@ Ask Dubo to generate a chart.
 
 - `query` (`str`): The chart to ask Dubo to generate.
 - `df` (`pd.DataFrame`): The DataFrame for the chart.
-- `specify_chart_type` (`ChartType | None`): Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
+- `chart_type` (`ChartType | None`): Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
 - `verbose` (`bool`): Whether to print verbose logs.
 
 **Returns**:
@@ -86,7 +86,7 @@ housing_df = pd.read_csv("https://raw.githubusercontent.com/ajduberstein/geo_dat
 chart(
     query="Map the houses",
     df=housing_df,
-    specify_chart_type=ChartType.DECK_GL,
+    chart_type=ChartType.DECK_GL,
     as_string=True,
 )
 

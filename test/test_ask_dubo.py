@@ -52,7 +52,7 @@ def test_ask_multi():
 def test_chart():
     ch = str(
         chart(
-            "Map the houses", housing_df, specify_chart_type=ChartType.DECK_GL, as_string=True
+            "Map the houses", housing_df, chart_type=ChartType.DECK_GL, as_string=True
         )
     )
     assert "html" in ch

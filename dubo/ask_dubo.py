@@ -115,7 +115,7 @@ def ask(
 def chart(
     query: str,
     df: pd.DataFrame,
-    specify_chart_type: ChartType | None = None,
+    chart_type: ChartType | None = None,
     verbose=False,
     **kwargs,
 ):
@@ -124,11 +124,11 @@ def chart(
 
     :param query: The chart to ask Dubo to generate.
     :param df: The DataFrame for the chart.
-    :param specify_chart_type: Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
+    :param chart_type: Type of chart: ChartType.DECK_GL or ChartType.VEGA_LITE.
     :param verbose: Whether to print verbose logs.
     :type query: str
     :type df: pd.DataFrame
-    :type specify_chart_type: ChartType | None
+    :type chart_type: ChartType | None
     :type verbose: bool
     :return: The chart.
 
@@ -144,7 +144,7 @@ def chart(
     chart(
         query="Map the houses",
         df=housing_df,
-        specify_chart_type=ChartType.DECK_GL,
+        chart_type=ChartType.DECK_GL,
         as_string=True,
     )
 
@@ -160,7 +160,6 @@ def chart(
     #        ...
     ```
     """
-    chart_type: ChartType | None = specify_chart_type
     if not chart_type:
         chart_type = get_query_execution_category_v1_dubo_categorize_chart_get.sync(
             client=client,
