@@ -20,7 +20,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: POST
-    uri: https://api.dubo.gg/api/v1/dubo/query/generate
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/generate
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -53,7 +53,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -86,7 +86,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -119,7 +119,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -152,7 +152,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -185,7 +185,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -218,7 +218,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -251,7 +251,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -284,7 +284,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"running","tables":null,"results_set":null,"sql_text":null,"row_count":null}'
@@ -317,7 +317,7 @@ interactions:
       x-dubo-key:
       - pk.test-api-key
     method: GET
-    uri: https://api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/retrieve?dispatch_id=query-56513883-6749-4f2b-ad57-7bb8cb350161
   response:
     content: '{"id":"query-56513883-6749-4f2b-ad57-7bb8cb350161","query_text":"How
       many area types are there?","status":"success","tables":null,"results_set":[{"count":9}],"sql_text":null,"row_count":1}'

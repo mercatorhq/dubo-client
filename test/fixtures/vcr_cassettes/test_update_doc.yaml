@@ -1,0 +1,72 @@
+interactions:
+- request:
+    body: "--84f4242e4618243caaaa06ab3ba9ca54\r\nContent-Disposition: form-data; name=\"file\";
+      filename=\"updated_doc.txt\"\r\nContent-Type: text/plain\r\n\r\nThis is an updated
+      document\n\r\n--84f4242e4618243caaaa06ab3ba9ca54--\r\n"
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '205'
+      content-type:
+      - multipart/form-data; boundary=84f4242e4618243caaaa06ab3ba9ca54
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: PUT
+    uri: https://test-api.dubo.gg/api/v1/dubo/documentation?data_source_documentation_id=e0dba56c-3531-48d3-ac3d-bf0447ca4e0a&shingle_length=150&step=75
+  response:
+    content: 'true'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 Sep 2023 02:21:29 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: GET
+    uri: https://test-api.dubo.gg/api/v1/dubo/documentation/e0dba56c-3531-48d3-ac3d-bf0447ca4e0a
+  response:
+    content: '{"id":"e0dba56c-3531-48d3-ac3d-bf0447ca4e0a","created_at":"2023-09-26T02:07:36.191322","updated_at":"2023-09-26T02:21:31.120267","file_name":"updated_doc.txt","data_source_id":"5214256a-c5f8-4a94-ae83-1f2c90f912b8","organization_id":"67427bda-9f97-4ba7-831b-832043b6fc31"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '272'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 Sep 2023 02:21:33 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

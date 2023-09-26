@@ -17,7 +17,7 @@ interactions:
       user-agent:
       - python-httpx/0.24.1
     method: GET
-    uri: https://api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20A%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
+    uri: https://test-api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20A%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
   response:
     content: '{"query_text":"SELECT SUM(a) FROM tbl_0"}'
     headers:
@@ -51,7 +51,7 @@ interactions:
       user-agent:
       - python-httpx/0.24.1
     method: GET
-    uri: https://api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20a%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
+    uri: https://test-api.dubo.gg/v1/dubo/query?user_query=What%20is%20the%20sum%20of%20a%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22a%22%20INTEGER%2C%0A%20%20%22b%22%20INTEGER%0A%29&macros=false&fast=false
   response:
     content: '{"query_text":"SELECT SUM(a) FROM tbl_0"}'
     headers:

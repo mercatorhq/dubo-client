@@ -29,7 +29,7 @@ interactions:
       user-agent:
       - python-httpx/0.24.1
     method: POST
-    uri: https://api.dubo.gg/v1/dubo/chart?num_charts=1
+    uri: https://test-api.dubo.gg/v1/dubo/chart?num_charts=1
   response:
     content: '[{"initialViewState":{"bearing":0,"latitude":24.983512,"longitude":121.5419,"pitch":0,"zoom":13},"layers":[{"@@type":"ScatterplotLayer","data":[],"filled":true,"getFillColor":[255,140,0],"getLineColor":[0,0,0],"getPosition":"@@=[lng,
       lat]","getRadius":"@@=price_per_unit_area","id":"d4a9b9e0-530d-4167-9ba2-3a046e7dde0c","lineWidthMinPixels":1,"opacity":0.8,"pickable":true,"radiusMaxPixels":100,"radiusMinPixels":1,"radiusScale":6,"stroked":true}],"mapProvider":"carto","views":[{"@@type":"MapView","controller":true,"mapStyle":"https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"}]}]'

@@ -20,7 +20,7 @@ interactions:
       x-dubo-key:
       - pk.f7345174d27f4dbc908afadbaa7d69af
     method: POST
-    uri: https://api.dubo.gg/api/v1/dubo/query/generate
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/generate
   response:
     content: '{"id":"c77f17a3e1754c0eb46e11f1c79efaf9","query_text":"How many area
       types are there?","status":"success","tables":null,"results_set":null,"sql_text":"SELECT

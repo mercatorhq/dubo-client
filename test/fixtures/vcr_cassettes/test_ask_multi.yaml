@@ -17,7 +17,7 @@ interactions:
       user-agent:
       - python-httpx/0.24.1
     method: GET
-    uri: https://api.dubo.gg/v1/dubo/query?user_query=How%20many%20houses%20are%20available%20to%20Bob%20based%20on%20his%20preferences%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22name%22%20TEXT%2C%0A%20%20%22house_age_max%22%20INTEGER%0A%29&schemas=CREATE%20TABLE%20%22tbl_1%22%20%28%0A%22id%22%20INTEGER%2C%0A%20%20%22transaction_date%22%20REAL%2C%0A%20%20%22house_age%22%20REAL%2C%0A%20%20%22mrt_distance%22%20REAL%2C%0A%20%20%22convenience_stores_nearby%22%20INTEGER%2C%0A%20%20%22lat%22%20REAL%2C%0A%20%20%22lng%22%20REAL%2C%0A%20%20%22price_per_unit_area%22%20REAL%0A%29&macros=false&fast=false
+    uri: https://test-api.dubo.gg/v1/dubo/query?user_query=How%20many%20houses%20are%20available%20to%20Bob%20based%20on%20his%20preferences%3F&schemas=CREATE%20TABLE%20%22tbl_0%22%20%28%0A%22name%22%20TEXT%2C%0A%20%20%22house_age_max%22%20INTEGER%0A%29&schemas=CREATE%20TABLE%20%22tbl_1%22%20%28%0A%22id%22%20INTEGER%2C%0A%20%20%22transaction_date%22%20REAL%2C%0A%20%20%22house_age%22%20REAL%2C%0A%20%20%22mrt_distance%22%20REAL%2C%0A%20%20%22convenience_stores_nearby%22%20INTEGER%2C%0A%20%20%22lat%22%20REAL%2C%0A%20%20%22lng%22%20REAL%2C%0A%20%20%22price_per_unit_area%22%20REAL%0A%29&macros=false&fast=false
   response:
     content: '{"query_text":"SELECT COUNT(*) \nFROM tbl_1 \nWHERE house_age <= (SELECT
       house_age_max FROM tbl_0 WHERE name = ''Bob'')"}'
