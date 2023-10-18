@@ -1,5 +1,4 @@
 import time
-from IPython.display import clear_output, display
 
 
 class DuboException(Exception):
@@ -24,6 +23,7 @@ def in_jupyter():
 def loading_icon(duration=5):
     if not in_jupyter():
         return
+    from IPython.display import clear_output, display  # noqa
     symbols = ["*---", "-*--", "--*-", "---*", "--*-", "-*--"]
     end_time = time.time() + duration
 
