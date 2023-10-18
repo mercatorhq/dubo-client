@@ -6,7 +6,7 @@ import os
 from dubo.common import DuboException
 
 load_dotenv()
-BASE_API_URL = os.getenv("DUBO_BASE_URL")
+BASE_API_URL = os.getenv("DUBO_BASE_URL", "https://dubo.gg/api/v1/dubo")
 RETRIEVE_RESULT_MAX_DELAY = float(os.getenv("DUBO_RETRIEVE_RESULT_MAX_DELAY", "10"))
 
 DOCS_URL = "https://docs.dubo.gg/"
