@@ -19,6 +19,7 @@ from dubo.api_client import Client as DuboApiClient
 from dubo.api_client.api.dubo import (
     read_query_v1_dubo_query_get,
 )
+
 from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
     create_documentation_api_v1_dubo_documentation_post,
@@ -30,7 +31,7 @@ from dubo.api_client.api.enterprise import (
 )
 from dubo.api_client.api.sdk import (
     create_dubo_chart_v1_dubo_chart_post,
-    get_query_execution_category_v1_dubo_categorize_chart_get
+    get_query_execution_category_v1_dubo_categorize_chart_get,
 )
 from dubo.api_client.models import *
 from dubo.api_client.types import *
@@ -93,6 +94,8 @@ def ask(
         descriptions=column_descriptions,
         json_body=BodyReadQueryV1DuboQueryGet(),
     )
+    if not possible_query:
+        raise DuboException(f"Unable to produce a result for the query: {query}")
     try:
         result = possible_query.query_text
         if verbose:
@@ -501,9 +504,7 @@ def get_all_docs() -> List[Dict[str, str]]:
     if res is None:
         return []
 
-    return [
-        {"file_name": doc.file_name, "id": doc.id} for doc in res
-    ]
+    return [{"file_name": doc.file_name, "id": doc.id} for doc in res]
 
 
 def update_doc(

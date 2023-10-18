@@ -22,8 +22,6 @@ def _get_kwargs(
     fast: Union[Unset, bool] = False,
     model: Union[Unset, str] = UNSET,
 ) -> Dict[str, Any]:
-    pass
-
     params: Dict[str, Any] = {}
     params["query"] = query
 
