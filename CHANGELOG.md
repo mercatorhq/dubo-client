@@ -1,6 +1,7 @@
 ## 0.2.8 (Aug 8 2024)
 
-- Update usage information
+- Update usage information and associated docs (#9)
+- Add additional error handling (#9)
 
 ## 0.2.7 (Aug 8 2023)
 
