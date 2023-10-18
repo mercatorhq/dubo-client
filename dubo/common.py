@@ -1,3 +1,6 @@
+import time
+
+
 class DuboException(Exception):
     def __init__(self, msg: str, *args: object) -> None:
         super().__init__(*args)
@@ -6,3 +9,26 @@ class DuboException(Exception):
 
     def __str__(self) -> str:
         return self.msg
+
+
+def in_jupyter():
+    try:
+        from IPython.display import clear_output  # noqa
+
+        return True
+    except ImportError:
+        return False
+
+
+def loading_icon(duration=5):
+    if not in_jupyter():
+        return
+    from IPython.display import clear_output, display  # noqa
+    symbols = ["*---", "-*--", "--*-", "---*", "--*-", "-*--"]
+    end_time = time.time() + duration
+
+    while time.time() < end_time:
+        for symbol in symbols:
+            clear_output(wait=True)  # noqa
+            display(symbol)
+            time.sleep(0.2)

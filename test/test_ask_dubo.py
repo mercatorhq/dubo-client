@@ -73,9 +73,7 @@ def test_query_just_sql():
     #     "SELECT COUNT(*) AS num_area_types FROM area_types",
     # )
     # TODO replace temporary assertion
-    valid_sqls = (
-        "SELECT COUNT(DISTINCT typname) FROM pg_catalog.pg_type WHERE typname LIKE '%area%'"
-    )
+    valid_sqls = "SELECT\n  COUNT(DISTINCT typname)\nFROM pg_catalog.pg_type\nWHERE\n  typname LIKE '%area%'"
     assert sql_text in valid_sqls
 
 
@@ -94,7 +92,7 @@ def test_query_filter_documentation():
         page_size=10,
     )
     expected_matched_doc = MatchedDoc(
-        body="Begin every query with a comment that says \"hello world\"",
+        body='Begin every query with a comment that says "hello world"',
         score=0.5,
         matched_doc_id="3f2ceb43-b6d7-4e0e-a597-d681a02151c9",
     )
@@ -109,12 +107,12 @@ def test_create_doc():
         step=50,
     )
     expected_doc = DataSourceDocument(
-        id='e0dba56c-3531-48d3-ac3d-bf0447ca4e0a',
-        file_name='doc.txt',
-        data_source_id='5214256a-c5f8-4a94-ae83-1f2c90f912b8',
-        organization_id='67427bda-9f97-4ba7-831b-832043b6fc31',
-        created_at=datetime.fromisoformat('2023-09-26T02:07:36'),
-        updated_at=datetime.fromisoformat('2023-09-26T02:07:36'),
+        id="e0dba56c-3531-48d3-ac3d-bf0447ca4e0a",
+        file_name="doc.txt",
+        data_source_id="5214256a-c5f8-4a94-ae83-1f2c90f912b8",
+        organization_id="67427bda-9f97-4ba7-831b-832043b6fc31",
+        created_at=datetime.fromisoformat("2023-09-26T02:07:36"),
+        updated_at=datetime.fromisoformat("2023-09-26T02:07:36"),
     )
     assert doc == expected_doc
 
@@ -129,19 +127,22 @@ def test_create_doc_invalid_file_raises_dubo_exception():
         )
 
     # TODO return 400 + better description
-    assert exception.value.msg == 'Documentation create failed with status code 500: Internal Server Error'
+    assert (
+        exception.value.msg
+        == "Documentation create failed with status code 500: Internal Server Error"
+    )
 
 
 @myvcr.use_cassette("test_get_doc.yaml")
 def test_get_doc():
     doc = get_doc("e0dba56c-3531-48d3-ac3d-bf0447ca4e0a")
     expected_doc = DataSourceDocument(
-        id='e0dba56c-3531-48d3-ac3d-bf0447ca4e0a',
-        file_name='doc.txt',
-        data_source_id='5214256a-c5f8-4a94-ae83-1f2c90f912b8',
-        organization_id='67427bda-9f97-4ba7-831b-832043b6fc31',
-        created_at=datetime.fromisoformat('2023-09-26T02:07:36'),
-        updated_at=datetime.fromisoformat('2023-09-26T02:07:36'),
+        id="e0dba56c-3531-48d3-ac3d-bf0447ca4e0a",
+        file_name="doc.txt",
+        data_source_id="5214256a-c5f8-4a94-ae83-1f2c90f912b8",
+        organization_id="67427bda-9f97-4ba7-831b-832043b6fc31",
+        created_at=datetime.fromisoformat("2023-09-26T02:07:36"),
+        updated_at=datetime.fromisoformat("2023-09-26T02:07:36"),
     )
     assert doc == expected_doc
 
@@ -151,7 +152,9 @@ def test_get_doc_not_found():
     with pytest.raises(DuboException) as exception:
         get_doc("4db79fff-a5b0-497e-baea-099e6935ed05")
 
-    expected_error = "Documentation with ID 4db79fff-a5b0-497e-baea-099e6935ed05 not found"
+    expected_error = (
+        "Documentation with ID 4db79fff-a5b0-497e-baea-099e6935ed05 not found"
+    )
     assert expected_error in exception.value.msg
 
 
@@ -159,7 +162,10 @@ def test_get_doc_not_found():
 def test_get_all_docs():
     docs = get_all_docs()
     assert docs == [
-        {"id": "173ba9c3-e03d-404f-a5cd-c0a8be3821be", "file_name": "free_text_box.txt"},
+        {
+            "id": "173ba9c3-e03d-404f-a5cd-c0a8be3821be",
+            "file_name": "free_text_box.txt",
+        },
         {"id": "e0dba56c-3531-48d3-ac3d-bf0447ca4e0a", "file_name": "doc.txt"},
     ]
 
@@ -187,5 +193,7 @@ def test_delete_doc():
     with pytest.raises(DuboException) as exception:
         get_doc("e0dba56c-3531-48d3-ac3d-bf0447ca4e0a")
 
-    expected_error = "Documentation with ID e0dba56c-3531-48d3-ac3d-bf0447ca4e0a not found"
+    expected_error = (
+        "Documentation with ID e0dba56c-3531-48d3-ac3d-bf0447ca4e0a not found"
+    )
     assert expected_error in exception.value.msg

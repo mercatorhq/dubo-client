@@ -1450,6 +1450,17 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "sqlglot"
+version = "18.15.0"
+description = "An easily customizable SQL parser and transpiler"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["autoflake", "black", "duckdb (>=0.6)", "isort", "mypy (>=0.990)", "pandas", "pdoc", "pre-commit", "pyspark", "python-dateutil", "types-python-dateutil"]
+
+[[package]]
 name = "terminado"
 version = "0.17.1"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -1728,7 +1739,7 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "9d4bb87cb24ac7843dd41545eef026fea884beb1ed1a23239059a8ac6a540f0a"
+content-hash = "253fec68abfa2ef3e10904d3d8838104a7be79660d3c3a72ea65f0b8f0afffcd"
 
 [metadata.files]
 altair = [
@@ -2928,6 +2939,10 @@ sniffio = [
 soupsieve = [
     {file = "soupsieve-2.5-py3-none-any.whl", hash = "sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7"},
     {file = "soupsieve-2.5.tar.gz", hash = "sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690"},
+]
+sqlglot = [
+    {file = "sqlglot-18.15.0-py3-none-any.whl", hash = "sha256:12825947f3aa91a3f9cf0bf5e4c4e767bb4854630ffef5fb0c79cfdd90b9c255"},
+    {file = "sqlglot-18.15.0.tar.gz", hash = "sha256:7010e428daacfed165a0e1306e7622596a2e96ad813d2b7b37d32baf0102cf9f"},
 ]
 terminado = [
     {file = "terminado-0.17.1-py3-none-any.whl", hash = "sha256:8650d44334eba354dd591129ca3124a6ba42c3d5b70df5051b6921d506fdaeae"},
