@@ -14,9 +14,8 @@ from dubo.entities import DataResult
 
 
 def dispatch_query(
-        client: Union[AuthenticatedClient, Client],
-        query: str,
-        fast: bool = False) -> str:
+    client: Union[AuthenticatedClient, Client], query: str, fast: bool = False
+) -> str:
     """
     Dispatch the query and get a tracking_id.
     """
@@ -31,12 +30,14 @@ def dispatch_query(
         x_dubo_key=api_key,
         json_body=json_body,
     )
+    if not res or not res.id:
+        raise DuboException("Failed to dispatch query.")
     return res.id
 
 
 def retrieve_result(
-        client: Union[AuthenticatedClient, Client],
-        tracking_id: str) -> DataResult:
+    client: Union[AuthenticatedClient, Client], tracking_id: str
+) -> DataResult:
     """
     Poll for the result using the provided tracking_id.
     """
@@ -54,9 +55,7 @@ def retrieve_result(
                 id=res.id,
                 query_text=res.query_text,
                 status=res.status,
-                results_set=[
-                    item.additional_properties for item in res.results_set
-                ],
+                results_set=[item.additional_properties for item in res.results_set],
                 row_count=res.row_count,
             )
         elif res.status == QueryStatus.FAILED:
@@ -67,9 +66,8 @@ def retrieve_result(
 
 
 def dispatch_and_retrieve(
-        client: Union[AuthenticatedClient, Client],
-        query: str,
-        fast: bool = False) -> DataResult:
+    client: Union[AuthenticatedClient, Client], query: str, fast: bool = False
+) -> DataResult:
     """
     Convenience function to generate the query and retrieve the result.
     """

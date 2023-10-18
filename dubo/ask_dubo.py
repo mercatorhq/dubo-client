@@ -2,6 +2,7 @@ import json
 import os
 from http import HTTPStatus
 from uuid import UUID
+import sqlglot
 
 import sqlite3
 from typing import Dict, List, Optional, Type
@@ -38,7 +39,7 @@ from dubo.api_client.types import *
 from dubo.api_client.models.matched_doc import MatchedDoc
 
 
-client = DuboApiClient(base_url=BASE_API_URL)
+client = DuboApiClient(base_url=BASE_API_URL)  # type: ignore
 
 
 def ask(
@@ -94,6 +95,7 @@ def ask(
         descriptions=column_descriptions,
         json_body=BodyReadQueryV1DuboQueryGet(),
     )
+
     if not possible_query:
         raise DuboException(f"Unable to produce a result for the query: {query}")
     try:
@@ -164,12 +166,20 @@ def chart(
     ```
     """
     if not chart_type:
-        chart_type = get_query_execution_category_v1_dubo_categorize_chart_get.sync(
+        chart_type_str = get_query_execution_category_v1_dubo_categorize_chart_get.sync(
             client=client,
             text_input=query,
         )
-    if chart_type not in (ChartType.VEGA_LITE, ChartType.DECK_GL):
-        raise ValueError("Chart type must be one of: VEGA_LITE, DECK_GL")
+        chart_type = ChartType(str(chart_type_str).lower())
+    else:
+        chart_type = ChartType(str(chart_type))
+    if ChartType(chart_type) not in (
+        ChartType.VEGA_LITE,
+        ChartType.DECK_GL,
+    ):
+        raise ValueError(
+            f"Chart type must be one of: VEGA_LITE, DECK_GL, got {chart_type}"
+        )
 
     if verbose:
         print("Generating a chart of type:", chart_type)
@@ -246,6 +256,7 @@ def query(
 def generate_sql(
     query_text: str,
     fast: bool = False,
+    pretty: bool = True,
 ) -> str:
     """
     Ask Dubo to generate a SQL query.
@@ -276,6 +287,10 @@ def generate_sql(
         x_dubo_key=api_key,
         json_body=body,
     )
+    if not res:
+        raise DuboException("Failed to generate SQL.")
+    if pretty and res.sql_text:
+        return sqlglot.parse_one(res.sql_text).sql(pretty=True)
     return res.sql_text
 
 
