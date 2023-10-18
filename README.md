@@ -1,7 +1,7 @@
 dubo
 ====
 
-dubo is a client for running LLMs against DataFrames and other 2D data.
+The Dubo SDK lets you interact with databases and data documentation via natural language. Use it with internal tools like Slackbots, within your company's ChatGPT plugin, or in your product directly.
 
 It is currently in a beta release. To join the beta, you can check out the [documentation](https://docs.dubo.gg).
 
