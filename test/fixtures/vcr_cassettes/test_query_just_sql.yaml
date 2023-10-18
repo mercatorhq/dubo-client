@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: '{"query_text": "How many area types are there?", "fast": false, "mode":
+      "just_sql_text"}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '88'
+      content-type:
+      - application/json
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.f7345174d27f4dbc908afadbaa7d69af
+    method: POST
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/generate
+  response:
+    content: '{"id":"c77f17a3e1754c0eb46e11f1c79efaf9","query_text":"How many area
+      types are there?","status":"success","tables":null,"results_set":null,"sql_text":"SELECT
+      COUNT(DISTINCT typname) FROM pg_catalog.pg_type WHERE typname LIKE ''%area%''","row_count":null}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '252'
+      content-type:
+      - application/json
+      date:
+      - Tue, 12 Sep 2023 05:47:43 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

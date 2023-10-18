@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: "--9a5a95653cefe6bb729ce7965eaae8ee\r\nContent-Disposition: form-data; name=\"file\";
+      filename=\"invalid_doc\"\r\nContent-Type: application/octet-stream\r\n\r\nThis
+      is a test document\n\r\n--9a5a95653cefe6bb729ce7965eaae8ee--\r\n"
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '211'
+      content-type:
+      - multipart/form-data; boundary=9a5a95653cefe6bb729ce7965eaae8ee
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: POST
+    uri: https://test-api.dubo.gg/api/v1/dubo/documentation?shingle_length=100&step=50
+  response:
+    content: Internal Server Error
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '21'
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Tue, 26 Sep 2023 02:57:22 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 500
+version: 1

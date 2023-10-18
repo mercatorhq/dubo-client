@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: GET
+    uri: https://test-api.dubo.gg/api/v1/dubo/query/filter-documentation?user_query=comment&data_source_documentation_id=3f2ceb43-b6d7-4e0e-a597-d681a02151c9&page_number=1&page_size=10
+  response:
+    content: '{"data":[{"body":"Begin every query with a comment that says \"hello
+      world\"","score":0.5,"matched_doc_id":"3f2ceb43-b6d7-4e0e-a597-d681a02151c9"}],"next_page":null}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '165'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 Sep 2023 02:00:26 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

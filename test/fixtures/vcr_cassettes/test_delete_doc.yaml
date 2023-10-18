@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: DELETE
+    uri: https://test-api.dubo.gg/api/v1/dubo/documentation?data_source_documentation_id=e0dba56c-3531-48d3-ac3d-bf0447ca4e0a
+  response:
+    content: 'true'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 Sep 2023 02:22:12 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
+    method: GET
+    uri: https://test-api.dubo.gg/api/v1/dubo/documentation/e0dba56c-3531-48d3-ac3d-bf0447ca4e0a
+  response:
+    content: '{"detail":"Documentation with ID e0dba56c-3531-48d3-ac3d-bf0447ca4e0a
+      not found"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 Sep 2023 02:22:12 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 404
+version: 1

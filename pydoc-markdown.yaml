@@ -1,0 +1,15 @@
+loaders:
+- type: python
+  search_path:
+    - dubo
+  modules:
+    - ask_dubo
+
+renderer:
+  type: markdown
+  filename: DOC.md
+  render_toc: true
+  render_toc_title: Dubo SDK
+  render_module_header: false
+  header_level_by_type:
+    Function: 2

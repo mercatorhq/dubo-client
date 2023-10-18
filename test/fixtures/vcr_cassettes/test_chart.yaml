@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"user_query": "Map the houses", "data_snippet": [{"id": 1, "transaction_date":
+      2012.9166667, "house_age": 32.0, "mrt_distance": 84.87882, "convenience_stores_nearby":
+      10, "lat": 24.98298, "lng": 121.54024, "price_per_unit_area": 37.9}, {"id":
+      2, "transaction_date": 2012.9166667, "house_age": 19.5, "mrt_distance": 306.5947,
+      "convenience_stores_nearby": 9, "lat": 24.98034, "lng": 121.53951, "price_per_unit_area":
+      42.2}, {"id": 3, "transaction_date": 2013.5833333, "house_age": 13.3, "mrt_distance":
+      561.9845, "convenience_stores_nearby": 5, "lat": 24.98746, "lng": 121.54391,
+      "price_per_unit_area": 47.3}, {"id": 4, "transaction_date": 2013.5, "house_age":
+      13.3, "mrt_distance": 561.9845, "convenience_stores_nearby": 5, "lat": 24.98746,
+      "lng": 121.54391, "price_per_unit_area": 54.8}, {"id": 5, "transaction_date":
+      2012.8333333, "house_age": 5.0, "mrt_distance": 390.5684, "convenience_stores_nearby":
+      5, "lat": 24.97937, "lng": 121.54245, "price_per_unit_area": 43.1}], "fast":
+      false, "chart_type": "deck_gl"}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '1014'
+      content-type:
+      - application/json
+      host:
+      - api.dubo.gg
+      user-agent:
+      - python-httpx/0.24.1
+    method: POST
+    uri: https://test-api.dubo.gg/v1/dubo/chart?num_charts=1
+  response:
+    content: '[{"initialViewState":{"bearing":0,"latitude":24.983512,"longitude":121.5419,"pitch":0,"zoom":13},"layers":[{"@@type":"ScatterplotLayer","data":[],"filled":true,"getFillColor":[255,140,0],"getLineColor":[0,0,0],"getPosition":"@@=[lng,
+      lat]","getRadius":"@@=price_per_unit_area","id":"d4a9b9e0-530d-4167-9ba2-3a046e7dde0c","lineWidthMinPixels":1,"opacity":0.8,"pickable":true,"radiusMaxPixels":100,"radiusMinPixels":1,"radiusScale":6,"stroked":true}],"mapProvider":"carto","views":[{"@@type":"MapView","controller":true,"mapStyle":"https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"}]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '599'
+      content-type:
+      - application/json
+      date:
+      - Tue, 12 Sep 2023 08:25:00 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
