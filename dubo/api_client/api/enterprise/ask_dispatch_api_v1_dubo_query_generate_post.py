@@ -3,8 +3,6 @@ from typing import Any, Dict, Optional, Union
 
 import httpx
 
-from dubo.common import DuboException
-
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.ask_dispatch_response import AskDispatchResponse
@@ -113,16 +111,11 @@ def sync(
         Union[AskDispatchResponse, HTTPValidationError]
     """
 
-    res = sync_detailed(
+    return sync_detailed(
         client=client,
         json_body=json_body,
         x_dubo_key=x_dubo_key,
-    )
-    if res.status_code != 200:
-        raise DuboException(
-            f"Failed to dispatch query, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
-        )
-    return res.parsed
+    ).parsed
 
 
 async def asyncio_detailed(

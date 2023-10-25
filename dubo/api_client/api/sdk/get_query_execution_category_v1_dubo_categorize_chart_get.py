@@ -14,6 +14,8 @@ def _get_kwargs(
     text_input: Union[Unset, str] = UNSET,
     column_names: Union[Unset, List[str]] = UNSET,
 ) -> Dict[str, Any]:
+    pass
+
     params: Dict[str, Any] = {}
     params["text_input"] = text_input
 
