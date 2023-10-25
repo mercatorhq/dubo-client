@@ -25,11 +25,17 @@ def dispatch_query(
         fast=fast,
     )
 
-    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
         x_dubo_key=api_key,
         json_body=json_body,
     )
+    if res.status_code != 200:
+        raise DuboException(
+            f"Failed to dispatch query, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    res = res.parsed
+
     if not res or not res.id:
         raise DuboException("Failed to dispatch query.")
     return res.id
