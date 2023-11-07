@@ -1,0 +1,6 @@
+typer[all]
+PyInquirer
+rich
+openai==0.28.1
+pandas
+numpy
