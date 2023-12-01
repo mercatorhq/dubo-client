@@ -282,11 +282,17 @@ def generate_sql(
         fast=fast,
         mode=CreateApiQueryMode.JUST_SQL_TEXT,
     )
-    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
         x_dubo_key=api_key,
         json_body=body,
     )
+    if res.status_code != 200:
+        raise DuboException(
+            f"Failed to dispatch query, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    res = res.parsed
+
     if not res:
         raise DuboException("Failed to generate SQL.")
     if pretty and res.sql_text:
@@ -339,11 +345,17 @@ def search_tables(
         fast=fast,
         mode=CreateApiQueryMode.JUST_TABLES,
     )
-    res = ask_dispatch_api_v1_dubo_query_generate_post.sync(
+    res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
         x_dubo_key=api_key,
         json_body=body,
     )
+    if res.status_code != 200:
+        raise DuboException(
+            f"Failed to dispatch query, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    res = res.parsed
+
     return res.tables
 
 

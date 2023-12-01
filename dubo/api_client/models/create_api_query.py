@@ -30,7 +30,7 @@ class CreateApiQuery:
         fast = self.fast
         mode: Union[Unset, str] = UNSET
         if not isinstance(self.mode, Unset):
-            mode = self.mode.value
+            mode = self.mode.value if self.mode else None
 
         field_dict: Dict[str, Any] = {}
         field_dict.update(self.additional_properties)

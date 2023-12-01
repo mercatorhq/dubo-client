@@ -49,7 +49,7 @@ class DuboChartQuery:
 
         chart_type: Union[Unset, str] = UNSET
         if not isinstance(self.chart_type, Unset):
-            chart_type = self.chart_type.value
+            chart_type = self.chart_type.value if self.chart_type else None
 
         thread_id = self.thread_id
 
