@@ -16,11 +16,7 @@ def _get_kwargs(
     data_source_documentation_id: Union[Unset, str] = UNSET,
     page_number: Union[Unset, int] = 1,
     page_size: Union[Unset, int] = 25,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     params: Dict[str, Any] = {}
     params["user_query"] = user_query
 
@@ -36,7 +32,6 @@ def _get_kwargs(
         "method": "get",
         "url": "/api/v1/dubo/query/filter-documentation",
         "params": params,
-        "headers": headers,
     }
 
 
@@ -70,12 +65,11 @@ def _build_response(
 
 def sync_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     user_query: str,
     data_source_documentation_id: Union[Unset, str] = UNSET,
     page_number: Union[Unset, int] = 1,
     page_size: Union[Unset, int] = 25,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, PageMatchedDoc]]:
     """Filter Documentation Endpoint
 
@@ -84,7 +78,6 @@ def sync_detailed(
         data_source_documentation_id (Union[Unset, str]):
         page_number (Union[Unset, int]): Page number Default: 1.
         page_size (Union[Unset, int]): Page size Default: 25.
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -99,7 +92,6 @@ def sync_detailed(
         data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -111,12 +103,11 @@ def sync_detailed(
 
 def sync(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     user_query: str,
     data_source_documentation_id: Union[Unset, str] = UNSET,
     page_number: Union[Unset, int] = 1,
     page_size: Union[Unset, int] = 25,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, PageMatchedDoc]]:
     """Filter Documentation Endpoint
 
@@ -125,7 +116,6 @@ def sync(
         data_source_documentation_id (Union[Unset, str]):
         page_number (Union[Unset, int]): Page number Default: 1.
         page_size (Union[Unset, int]): Page size Default: 25.
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -141,18 +131,16 @@ def sync(
         data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     user_query: str,
     data_source_documentation_id: Union[Unset, str] = UNSET,
     page_number: Union[Unset, int] = 1,
     page_size: Union[Unset, int] = 25,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, PageMatchedDoc]]:
     """Filter Documentation Endpoint
 
@@ -161,7 +149,6 @@ async def asyncio_detailed(
         data_source_documentation_id (Union[Unset, str]):
         page_number (Union[Unset, int]): Page number Default: 1.
         page_size (Union[Unset, int]): Page size Default: 25.
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -176,7 +163,6 @@ async def asyncio_detailed(
         data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -186,12 +172,11 @@ async def asyncio_detailed(
 
 async def asyncio(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     user_query: str,
     data_source_documentation_id: Union[Unset, str] = UNSET,
     page_number: Union[Unset, int] = 1,
     page_size: Union[Unset, int] = 25,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, PageMatchedDoc]]:
     """Filter Documentation Endpoint
 
@@ -200,7 +185,6 @@ async def asyncio(
         data_source_documentation_id (Union[Unset, str]):
         page_number (Union[Unset, int]): Page number Default: 1.
         page_size (Union[Unset, int]): Page size Default: 25.
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -217,6 +201,5 @@ async def asyncio(
             data_source_documentation_id=data_source_documentation_id,
             page_number=page_number,
             page_size=page_size,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed

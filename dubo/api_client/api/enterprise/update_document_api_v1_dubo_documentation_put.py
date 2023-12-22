@@ -16,11 +16,7 @@ def _get_kwargs(
     data_source_documentation_id: str,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     params: Dict[str, Any] = {}
     params["data_source_documentation_id"] = data_source_documentation_id
 
@@ -37,7 +33,6 @@ def _get_kwargs(
         "url": "/api/v1/dubo/documentation",
         "files": multipart_multipart_data,
         "params": params,
-        "headers": headers,
     }
 
 
@@ -70,12 +65,11 @@ def _build_response(
 
 def sync_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyUpdateDocumentApiV1DuboDocumentationPut,
     data_source_documentation_id: str,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, bool]]:
     """Update Document
 
@@ -83,7 +77,6 @@ def sync_detailed(
         data_source_documentation_id (str):
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyUpdateDocumentApiV1DuboDocumentationPut):
 
     Raises:
@@ -99,7 +92,6 @@ def sync_detailed(
         data_source_documentation_id=data_source_documentation_id,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -111,12 +103,11 @@ def sync_detailed(
 
 def sync(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyUpdateDocumentApiV1DuboDocumentationPut,
     data_source_documentation_id: str,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, bool]]:
     """Update Document
 
@@ -124,7 +115,6 @@ def sync(
         data_source_documentation_id (str):
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyUpdateDocumentApiV1DuboDocumentationPut):
 
     Raises:
@@ -141,18 +131,16 @@ def sync(
         data_source_documentation_id=data_source_documentation_id,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyUpdateDocumentApiV1DuboDocumentationPut,
     data_source_documentation_id: str,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, bool]]:
     """Update Document
 
@@ -160,7 +148,6 @@ async def asyncio_detailed(
         data_source_documentation_id (str):
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyUpdateDocumentApiV1DuboDocumentationPut):
 
     Raises:
@@ -176,7 +163,6 @@ async def asyncio_detailed(
         data_source_documentation_id=data_source_documentation_id,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -186,12 +172,11 @@ async def asyncio_detailed(
 
 async def asyncio(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyUpdateDocumentApiV1DuboDocumentationPut,
     data_source_documentation_id: str,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, bool]]:
     """Update Document
 
@@ -199,7 +184,6 @@ async def asyncio(
         data_source_documentation_id (str):
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyUpdateDocumentApiV1DuboDocumentationPut):
 
     Raises:
@@ -217,6 +201,5 @@ async def asyncio(
             data_source_documentation_id=data_source_documentation_id,
             shingle_length=shingle_length,
             step=step,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed

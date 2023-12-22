@@ -15,3 +15,6 @@ generate-api-client:
 
 generate-doc:
 	@./pydoc-generator.sh
+
+test *args:
+        python -m pytest {{args}}

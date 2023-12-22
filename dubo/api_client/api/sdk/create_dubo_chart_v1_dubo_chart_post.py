@@ -15,8 +15,6 @@ def _get_kwargs(
     json_body: DuboChartQuery,
     num_charts: Union[Unset, int] = 1,
 ) -> Dict[str, Any]:
-    pass
-
     params: Dict[str, Any] = {}
     params["num_charts"] = num_charts
 

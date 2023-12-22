@@ -18,11 +18,7 @@ def _get_kwargs(
     multipart_data: BodyCreateDocumentationApiV1DuboDocumentationPost,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     params: Dict[str, Any] = {}
     params["shingle_length"] = shingle_length
 
@@ -37,7 +33,6 @@ def _get_kwargs(
         "url": "/api/v1/dubo/documentation",
         "files": multipart_multipart_data,
         "params": params,
-        "headers": headers,
     }
 
 
@@ -71,18 +66,16 @@ def _build_response(
 
 def sync_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyCreateDocumentationApiV1DuboDocumentationPost,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Response[Union[DataSourceDocument, HTTPValidationError]]:
     """Create Documentation
 
     Args:
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyCreateDocumentationApiV1DuboDocumentationPost):
 
     Raises:
@@ -97,7 +90,6 @@ def sync_detailed(
         multipart_data=multipart_data,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -109,18 +101,16 @@ def sync_detailed(
 
 def sync(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyCreateDocumentationApiV1DuboDocumentationPost,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Optional[Union[DataSourceDocument, HTTPValidationError]]:
     """Create Documentation
 
     Args:
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyCreateDocumentationApiV1DuboDocumentationPost):
 
     Raises:
@@ -136,24 +126,21 @@ def sync(
         multipart_data=multipart_data,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyCreateDocumentationApiV1DuboDocumentationPost,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Response[Union[DataSourceDocument, HTTPValidationError]]:
     """Create Documentation
 
     Args:
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyCreateDocumentationApiV1DuboDocumentationPost):
 
     Raises:
@@ -168,7 +155,6 @@ async def asyncio_detailed(
         multipart_data=multipart_data,
         shingle_length=shingle_length,
         step=step,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -178,18 +164,16 @@ async def asyncio_detailed(
 
 async def asyncio(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     multipart_data: BodyCreateDocumentationApiV1DuboDocumentationPost,
     shingle_length: Union[Unset, int] = 1000,
     step: Union[Unset, int] = 500,
-    x_dubo_key: str,
 ) -> Optional[Union[DataSourceDocument, HTTPValidationError]]:
     """Create Documentation
 
     Args:
         shingle_length (Union[Unset, int]):  Default: 1000.
         step (Union[Unset, int]):  Default: 500.
-        x_dubo_key (str):
         multipart_data (BodyCreateDocumentationApiV1DuboDocumentationPost):
 
     Raises:
@@ -206,6 +190,5 @@ async def asyncio(
             multipart_data=multipart_data,
             shingle_length=shingle_length,
             step=step,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed
