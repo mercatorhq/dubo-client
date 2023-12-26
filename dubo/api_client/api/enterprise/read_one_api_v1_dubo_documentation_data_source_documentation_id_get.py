@@ -12,18 +12,12 @@ from ...types import Response
 
 def _get_kwargs(
     data_source_documentation_id: str,
-    *,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     return {
         "method": "get",
         "url": "/api/v1/dubo/documentation/{data_source_documentation_id}".format(
             data_source_documentation_id=data_source_documentation_id,
         ),
-        "headers": headers,
     }
 
 
@@ -58,14 +52,12 @@ def _build_response(
 def sync_detailed(
     data_source_documentation_id: str,
     *,
-    client: Union[AuthenticatedClient, Client],
-    x_dubo_key: str,
+    client: AuthenticatedClient,
 ) -> Response[Union[DataSourceDocument, HTTPValidationError]]:
     """Read One
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -77,7 +69,6 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -90,14 +81,12 @@ def sync_detailed(
 def sync(
     data_source_documentation_id: str,
     *,
-    client: Union[AuthenticatedClient, Client],
-    x_dubo_key: str,
+    client: AuthenticatedClient,
 ) -> Optional[Union[DataSourceDocument, HTTPValidationError]]:
     """Read One
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -110,21 +99,18 @@ def sync(
     return sync_detailed(
         data_source_documentation_id=data_source_documentation_id,
         client=client,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     data_source_documentation_id: str,
     *,
-    client: Union[AuthenticatedClient, Client],
-    x_dubo_key: str,
+    client: AuthenticatedClient,
 ) -> Response[Union[DataSourceDocument, HTTPValidationError]]:
     """Read One
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -136,7 +122,6 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -147,14 +132,12 @@ async def asyncio_detailed(
 async def asyncio(
     data_source_documentation_id: str,
     *,
-    client: Union[AuthenticatedClient, Client],
-    x_dubo_key: str,
+    client: AuthenticatedClient,
 ) -> Optional[Union[DataSourceDocument, HTTPValidationError]]:
     """Read One
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -168,6 +151,5 @@ async def asyncio(
         await asyncio_detailed(
             data_source_documentation_id=data_source_documentation_id,
             client=client,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed

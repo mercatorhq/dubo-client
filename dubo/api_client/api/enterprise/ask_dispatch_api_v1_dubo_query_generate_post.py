@@ -14,18 +14,13 @@ from ...types import Response
 def _get_kwargs(
     *,
     json_body: CreateApiQuery,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     json_json_body = json_body.to_dict()
 
     return {
         "method": "post",
         "url": "/api/v1/dubo/query/generate",
         "json": json_json_body,
-        "headers": headers,
     }
 
 
@@ -59,14 +54,12 @@ def _build_response(
 
 def sync_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     json_body: CreateApiQuery,
-    x_dubo_key: str,
 ) -> Response[Union[AskDispatchResponse, HTTPValidationError]]:
     """Ask Dispatch
 
     Args:
-        x_dubo_key (str):
         json_body (CreateApiQuery): Developer API query POST body. NOTE: DO NOT use this in other
             parts of the application. Prefer QueryExecutionCreate.
 
@@ -80,7 +73,6 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         json_body=json_body,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -92,14 +84,12 @@ def sync_detailed(
 
 def sync(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     json_body: CreateApiQuery,
-    x_dubo_key: str,
 ) -> Optional[Union[AskDispatchResponse, HTTPValidationError]]:
     """Ask Dispatch
 
     Args:
-        x_dubo_key (str):
         json_body (CreateApiQuery): Developer API query POST body. NOTE: DO NOT use this in other
             parts of the application. Prefer QueryExecutionCreate.
 
@@ -114,20 +104,17 @@ def sync(
     return sync_detailed(
         client=client,
         json_body=json_body,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     json_body: CreateApiQuery,
-    x_dubo_key: str,
 ) -> Response[Union[AskDispatchResponse, HTTPValidationError]]:
     """Ask Dispatch
 
     Args:
-        x_dubo_key (str):
         json_body (CreateApiQuery): Developer API query POST body. NOTE: DO NOT use this in other
             parts of the application. Prefer QueryExecutionCreate.
 
@@ -141,7 +128,6 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         json_body=json_body,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -151,14 +137,12 @@ async def asyncio_detailed(
 
 async def asyncio(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     json_body: CreateApiQuery,
-    x_dubo_key: str,
 ) -> Optional[Union[AskDispatchResponse, HTTPValidationError]]:
     """Ask Dispatch
 
     Args:
-        x_dubo_key (str):
         json_body (CreateApiQuery): Developer API query POST body. NOTE: DO NOT use this in other
             parts of the application. Prefer QueryExecutionCreate.
 
@@ -174,6 +158,5 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             json_body=json_body,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed
