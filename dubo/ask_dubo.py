@@ -195,7 +195,7 @@ def chart(
         DuboChartQueryDataSnippetItem.from_dict(item) for item in data_snippet
     ]
 
-    charts = create_dubo_chart_v1_dubo_chart_post.sync(
+    res = create_dubo_chart_v1_dubo_chart_post.sync_detailed(
         client=client,
         json_body=DuboChartQuery(
             user_query=query,
@@ -204,6 +204,11 @@ def chart(
             chart_type=chart_type,
         ),
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    charts = res.parsed
 
     if chart_type == ChartType.VEGA_LITE:
         chart = charts[0]
@@ -399,15 +404,19 @@ def filter_documentation(
     ```
     """
 
-    res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(
+    res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync_detailed(
         client=client,
         user_query=user_query,
         data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
 
-    return res.data
+    return res.parsed.data
 
 
 def create_doc(
@@ -519,9 +528,14 @@ def get_all_docs() -> List[Dict[str, str]]:
     # [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
     ```
     """
-    res = read_all_api_v1_dubo_documentation_get.sync(
+    res = read_all_api_v1_dubo_documentation_get.sync_detailed(
         client=client,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    res = res.parsed
 
     if res is None:
         return []
@@ -602,9 +616,13 @@ def delete_doc(data_source_documentation_id: str) -> bool:
     """
     # No need to fetch by name, just use the provided ID directly.
 
-    res = delete_document_by_id_api_v1_dubo_documentation_delete.sync(
+    res = delete_document_by_id_api_v1_dubo_documentation_delete.sync_detailed(
         client=client,
         data_source_documentation_id=data_source_documentation_id,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
 
-    return res
+    return res.parsed

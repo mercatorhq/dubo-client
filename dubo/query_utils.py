@@ -48,10 +48,16 @@ def retrieve_result(
     delay = 0.1
     max_delay = RETRIEVE_RESULT_MAX_DELAY
     while True:
-        res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
+        res = ask_poll_api_v1_dubo_query_retrieve_get.sync_detailed(
             client=client,
             dispatch_id=tracking_id,
         )
+        if res.status_code != HTTPStatus.OK:
+            raise DuboException(
+                f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+            )
+        res = res.parsed
+
         if res.status == QueryStatus.SUCCESS:
             return DataResult(
                 id=res.id,
