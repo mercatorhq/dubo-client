@@ -1,25 +1,24 @@
 import time
-from typing import Union
+from http import HTTPStatus
 
-from dubo.api_client import AuthenticatedClient, Client
+from dubo.api_client import AuthenticatedClient
 from dubo.api_client.api.enterprise import (
     ask_dispatch_api_v1_dubo_query_generate_post,
     ask_poll_api_v1_dubo_query_retrieve_get,
 )
 from dubo.api_client.models import *
 from dubo.common import DuboException
-
-from dubo.config import get_dubo_key, RETRIEVE_RESULT_MAX_DELAY
+from dubo.config import RETRIEVE_RESULT_MAX_DELAY
 from dubo.entities import DataResult
 
 
 def dispatch_query(
-    client: Union[AuthenticatedClient, Client], query: str, fast: bool = False
+    client: AuthenticatedClient, query: str, fast: bool = False
 ) -> str:
     """
     Dispatch the query and get a tracking_id.
     """
-    api_key = get_dubo_key()
+
     json_body = CreateApiQuery(
         query_text=query,
         fast=fast,
@@ -27,7 +26,6 @@ def dispatch_query(
 
     res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
         json_body=json_body,
     )
     if res.status_code != 200:
@@ -42,18 +40,16 @@ def dispatch_query(
 
 
 def retrieve_result(
-    client: Union[AuthenticatedClient, Client], tracking_id: str
+    client: AuthenticatedClient, tracking_id: str
 ) -> DataResult:
     """
     Poll for the result using the provided tracking_id.
     """
     delay = 0.1
     max_delay = RETRIEVE_RESULT_MAX_DELAY
-    api_key = get_dubo_key()
     while True:
         res = ask_poll_api_v1_dubo_query_retrieve_get.sync(
             client=client,
-            x_dubo_key=api_key,
             dispatch_id=tracking_id,
         )
         if res.status == QueryStatus.SUCCESS:
@@ -72,7 +68,7 @@ def retrieve_result(
 
 
 def dispatch_and_retrieve(
-    client: Union[AuthenticatedClient, Client], query: str, fast: bool = False
+    client: AuthenticatedClient, query: str, fast: bool = False
 ) -> DataResult:
     """
     Convenience function to generate the query and retrieve the result.
