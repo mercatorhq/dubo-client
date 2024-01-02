@@ -16,7 +16,7 @@ from dubo.config import BASE_API_URL, get_dubo_key
 from dubo.entities import DataResult
 from dubo.query_utils import dispatch_and_retrieve
 
-from dubo.api_client import Client as DuboApiClient
+from dubo.api_client import AuthenticatedClient
 from dubo.api_client.api.dubo import (
     read_query_v1_dubo_query_get,
 )
@@ -39,7 +39,13 @@ from dubo.api_client.types import *
 from dubo.api_client.models.matched_doc import MatchedDoc
 
 
-client = DuboApiClient(base_url=BASE_API_URL)  # type: ignore
+api_key = get_dubo_key()
+client = AuthenticatedClient(
+    base_url=BASE_API_URL,
+    token=api_key,
+    auth_header_name="x-dubo-key",
+    prefix="",
+)
 
 
 def ask(
@@ -189,7 +195,7 @@ def chart(
         DuboChartQueryDataSnippetItem.from_dict(item) for item in data_snippet
     ]
 
-    charts = create_dubo_chart_v1_dubo_chart_post.sync(
+    res = create_dubo_chart_v1_dubo_chart_post.sync_detailed(
         client=client,
         json_body=DuboChartQuery(
             user_query=query,
@@ -198,6 +204,11 @@ def chart(
             chart_type=chart_type,
         ),
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    charts = res.parsed
 
     if chart_type == ChartType.VEGA_LITE:
         chart = charts[0]
@@ -249,7 +260,7 @@ def query(
     # )
     ```
     """
-    get_dubo_key()
+
     return dispatch_and_retrieve(client, query_text, fast)
 
 
@@ -276,7 +287,7 @@ def generate_sql(
     # "SELECT COUNT(DISTINCT type) AS num_area_types FROM public.area"
     ```
     """
-    api_key = get_dubo_key()
+
     body = CreateApiQuery(
         query_text=query_text,
         fast=fast,
@@ -284,7 +295,6 @@ def generate_sql(
     )
     res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
         json_body=body,
     )
     if res.status_code != 200:
@@ -339,7 +349,6 @@ def search_tables(
     # ]
     ```
     """
-    api_key = get_dubo_key()
     body = CreateApiQuery(
         query_text=query_text,
         fast=fast,
@@ -347,7 +356,6 @@ def search_tables(
     )
     res = ask_dispatch_api_v1_dubo_query_generate_post.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
         json_body=body,
     )
     if res.status_code != 200:
@@ -395,18 +403,20 @@ def filter_documentation(
     #  ), ...]
     ```
     """
-    api_key = get_dubo_key()
 
-    res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync(
+    res = filter_documentation_endpoint_api_v1_dubo_query_filter_documentation_get.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
         user_query=user_query,
         data_source_documentation_id=data_source_documentation_id,
         page_number=page_number,
         page_size=page_size,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
 
-    return res.data
+    return res.parsed.data
 
 
 def create_doc(
@@ -442,7 +452,6 @@ def create_doc(
     # )
     ```
     """
-    api_key = get_dubo_key()
 
     with open(file_path, "rb") as doc:
         file_name = os.path.basename(file_path)
@@ -455,7 +464,6 @@ def create_doc(
 
         res = create_documentation_api_v1_dubo_documentation_post.sync_detailed(
             client=client,
-            x_dubo_key=api_key,
             multipart_data=body,
             shingle_length=shingle_length,
             step=step,
@@ -492,11 +500,9 @@ def get_doc(data_source_documentation_id: str) -> DataSourceDocument:
     # )
     ```
     """
-    api_key = get_dubo_key()
     res = read_one_api_v1_dubo_documentation_data_source_documentation_id_get.sync_detailed(
         client=client,
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=api_key,
     )
 
     if res.status_code == HTTPStatus.OK:
@@ -522,11 +528,14 @@ def get_all_docs() -> List[Dict[str, str]]:
     # [{'file_name': 'documentation.txt', 'id': 'c1d62c33-4561-4b5f-b2c2-e0203cee1f7b'}]
     ```
     """
-    api_key = get_dubo_key()
-    res = read_all_api_v1_dubo_documentation_get.sync(
+    res = read_all_api_v1_dubo_documentation_get.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+    res = res.parsed
 
     if res is None:
         return []
@@ -563,7 +572,6 @@ def update_doc(
     # True
     ```
     """
-    api_key = get_dubo_key()
 
     with open(file_path, "rb") as doc:
         file_name = os.path.basename(file_path)
@@ -576,7 +584,6 @@ def update_doc(
         )
         res = update_document_api_v1_dubo_documentation_put.sync_detailed(
             client=client,
-            x_dubo_key=api_key,
             data_source_documentation_id=str(UUID(data_source_documentation_id)),
             shingle_length=shingle_length,
             step=step,
@@ -608,12 +615,14 @@ def delete_doc(data_source_documentation_id: str) -> bool:
     ```
     """
     # No need to fetch by name, just use the provided ID directly.
-    api_key = get_dubo_key()
 
-    res = delete_document_by_id_api_v1_dubo_documentation_delete.sync(
+    res = delete_document_by_id_api_v1_dubo_documentation_delete.sync_detailed(
         client=client,
-        x_dubo_key=api_key,
         data_source_documentation_id=data_source_documentation_id,
     )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
 
-    return res
+    return res.parsed

@@ -12,11 +12,7 @@ from ...types import UNSET, Response
 def _get_kwargs(
     *,
     data_source_documentation_id: str,
-    x_dubo_key: str,
 ) -> Dict[str, Any]:
-    headers = {}
-    headers["x-dubo-key"] = x_dubo_key
-
     params: Dict[str, Any] = {}
     params["data_source_documentation_id"] = data_source_documentation_id
 
@@ -26,7 +22,6 @@ def _get_kwargs(
         "method": "delete",
         "url": "/api/v1/dubo/documentation",
         "params": params,
-        "headers": headers,
     }
 
 
@@ -59,15 +54,13 @@ def _build_response(
 
 def sync_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     data_source_documentation_id: str,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, bool]]:
     """Delete Document By Id
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -79,7 +72,6 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=x_dubo_key,
     )
 
     response = client.get_httpx_client().request(
@@ -91,15 +83,13 @@ def sync_detailed(
 
 def sync(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     data_source_documentation_id: str,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, bool]]:
     """Delete Document By Id
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -112,21 +102,18 @@ def sync(
     return sync_detailed(
         client=client,
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=x_dubo_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     data_source_documentation_id: str,
-    x_dubo_key: str,
 ) -> Response[Union[HTTPValidationError, bool]]:
     """Delete Document By Id
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -138,7 +125,6 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         data_source_documentation_id=data_source_documentation_id,
-        x_dubo_key=x_dubo_key,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -148,15 +134,13 @@ async def asyncio_detailed(
 
 async def asyncio(
     *,
-    client: Union[AuthenticatedClient, Client],
+    client: AuthenticatedClient,
     data_source_documentation_id: str,
-    x_dubo_key: str,
 ) -> Optional[Union[HTTPValidationError, bool]]:
     """Delete Document By Id
 
     Args:
         data_source_documentation_id (str):
-        x_dubo_key (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -170,6 +154,5 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             data_source_documentation_id=data_source_documentation_id,
-            x_dubo_key=x_dubo_key,
         )
     ).parsed

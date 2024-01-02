@@ -14,10 +14,16 @@ T = TypeVar("T", bound="PageMatchedDoc")
 
 @_attrs_define
 class PageMatchedDoc:
-    """
-    Attributes:
-        data (List['MatchedDoc']):
-        next_page (Union[Unset, int]):
+    """A generic page response.
+
+    This is used to return a list of items with pagination information.
+
+    The `data` field contains the list of items.
+    The `next_page` field contains the next page number, or `None` if there is no next page.
+
+        Attributes:
+            data (List['MatchedDoc']):
+            next_page (Union[Unset, int]):
     """
 
     data: List["MatchedDoc"]
