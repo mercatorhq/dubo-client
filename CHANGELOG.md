@@ -1,3 +1,7 @@
+## 0.2.10 (Jan 6 2024)
+
+- Regenerate OpenAPI spec (#25)
+
 ## 0.2.9 (Oct 17 2023)
 
 - Update usage information and associated docs (#18)
