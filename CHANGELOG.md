@@ -1,4 +1,4 @@
-## 0.2.10 (Jan 6 2024)
+## 0.2.11 (Jan 6 2024)
 
 - Regenerate OpenAPI spec (#25)
 
