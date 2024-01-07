@@ -28,20 +28,22 @@ interactions:
       - api.dubo.gg
       user-agent:
       - python-httpx/0.24.1
+      x-dubo-key:
+      - pk.test-api-key
     method: POST
-    uri: https://test-api.dubo.gg/v1/dubo/chart?num_charts=1
+    uri: https://api.dubo.gg/v1/dubo/chart?num_charts=1
   response:
-    content: '[{"initialViewState":{"bearing":0,"latitude":24.983512,"longitude":121.5419,"pitch":0,"zoom":13},"layers":[{"@@type":"ScatterplotLayer","data":[],"filled":true,"getFillColor":[255,140,0],"getLineColor":[0,0,0],"getPosition":"@@=[lng,
-      lat]","getRadius":"@@=price_per_unit_area","id":"d4a9b9e0-530d-4167-9ba2-3a046e7dde0c","lineWidthMinPixels":1,"opacity":0.8,"pickable":true,"radiusMaxPixels":100,"radiusMinPixels":1,"radiusScale":6,"stroked":true}],"mapProvider":"carto","views":[{"@@type":"MapView","controller":true,"mapStyle":"https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"}]}]'
+    content: '{"initialViewState":{"bearing":0,"latitude":24.98298,"longitude":121.54024,"pitch":0,"zoom":13},"layers":[{"@@type":"ScatterplotLayer","data":[],"filled":true,"getFillColor":[255,0,0,255],"getPosition":"@@=[lng,
+      lat]","getRadius":"@@=price_per_unit_area * 2","id":"houses","opacity":0.8,"pickable":true,"radiusMinPixels":2,"radiusScale":1}],"mapProvider":"carto","views":[{"@@type":"MapView","controller":true,"mapStyle":"https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json"}]}'
     headers:
       Connection:
       - keep-alive
       Content-Length:
-      - '599'
+      - '496'
       content-type:
       - application/json
       date:
-      - Tue, 12 Sep 2023 08:25:00 GMT
+      - Sun, 07 Jan 2024 08:13:32 GMT
       server:
       - uvicorn
     http_version: HTTP/1.1
