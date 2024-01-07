@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dubo"
-version = "0.2.9"
+version = "0.2.10"
 description = "Analytics made simple"
 authors = ["Andrew Duberstein <ajduberstein@gmail.com>", "Andrew Duberstein <duber@mercator.tech>"]
 license = "MIT"
