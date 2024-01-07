@@ -208,17 +208,15 @@ def chart(
         raise DuboException(
             f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
         )
-    charts = res.parsed
+    chart = res.parsed
 
     if chart_type == ChartType.VEGA_LITE:
-        chart = charts[0]
         chart["data"] = {"values": df.sample(10000).to_dict(orient="records")}
         chart["height"] = kwargs.get("height") or 390
         chart["width"] = kwargs.get("width") or 500
         return alt.Chart.from_dict(chart, **kwargs)
 
     if chart_type == ChartType.DECK_GL:
-        chart = charts[0]
         for layer in chart["layers"]:
             if "data" in layer:
                 layer["data"] = df.to_dict(orient="records")
