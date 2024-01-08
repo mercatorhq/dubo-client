@@ -1,3 +1,7 @@
+## 0.2.13 (Jan 8 2024)
+
+- Fix key error that occurs on API errors for the `query` method
+
 ## 0.2.12 (Jan 8 2024)
 
 - Warn when a data set is potentially than Vega-Lite should render
