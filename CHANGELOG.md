@@ -1,3 +1,7 @@
+## 0.2.12 (Jan 8 2024)
+
+- Warn when a data set is potentially than Vega-Lite should render
+
 ## 0.2.11 (Jan 6 2024)
 
 - Regenerate OpenAPI spec (#25)

@@ -6,6 +6,7 @@ import sqlglot
 
 import sqlite3
 from typing import Dict, List, Optional, Type
+import warnings
 
 import pandas as pd
 import altair as alt
@@ -211,7 +212,9 @@ def chart(
     chart = res.parsed
 
     if chart_type == ChartType.VEGA_LITE:
-        chart["data"] = {"values": df.sample(10000).to_dict(orient="records")}
+        if len(df) > 10000:
+            warnings.warn("Input has more than 10,000 rows. Only the first 10,000 will be used.", UserWarning)
+        chart["data"] = {"values": df.head(10000).to_dict(orient="records")}
         chart["height"] = kwargs.get("height") or 390
         chart["width"] = kwargs.get("width") or 500
         return alt.Chart.from_dict(chart, **kwargs)
