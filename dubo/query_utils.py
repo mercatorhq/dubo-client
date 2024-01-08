@@ -67,7 +67,7 @@ def retrieve_result(
                 row_count=res.row_count,
             )
         elif res.status == QueryStatus.FAILED:
-            raise DuboException(res["error"])
+            raise DuboException(f"Query `{res.query_text}` failed to run")
         else:
             time.sleep(delay)
             delay = min(delay * 2, max_delay)
