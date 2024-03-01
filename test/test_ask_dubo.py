@@ -15,6 +15,9 @@ myvcr = vcr.VCR(
     cassette_library_dir=CASSETTE_DIR,
     record_mode="once",  # type: ignore
     match_on=MATCH_ON,
+    filter_headers=[
+        "x-dubo-key",
+    ]
 )
 
 # Sample data
@@ -197,3 +200,24 @@ def test_delete_doc():
         "Documentation with ID e0dba56c-3531-48d3-ac3d-bf0447ca4e0a not found"
     )
     assert expected_error in exception.value.msg
+
+
+@myvcr.use_cassette("test_autocomplete_sql.yaml")
+def test_autocomplete_sql():
+    res = autocomplete_sql("SELECT * FROM p", 14)
+    assert res.sql_query_suggested == "dbo.persons"
+    assert res.sql_query_full == "SELECT * FROM dbo.persons"
+
+    res = autocomplete_sql("SELECT * FROM ")
+    assert res.sql_query_suggested == "cities;"
+    assert res.sql_query_full == "SELECT * FROM cities;"
+
+
+def test_autocomplete_sql_with_invalid_cursor():
+    with pytest.raises(DuboException) as exception:
+        autocomplete_sql("SELECT * FROM")
+    assert exception.value.msg == "The last character must be a whitespace"
+
+    with pytest.raises(DuboException) as exception:
+        autocomplete_sql("SELECT * FROM p", 6)
+    assert exception.value.msg == "When a cursor position is set, the character before must be a whitespace"

@@ -12,8 +12,6 @@ interactions:
       - api.dubo.gg
       user-agent:
       - python-httpx/0.24.1
-      x-dubo-key:
-      - pk.test-api-key
     method: GET
     uri: https://test-api.dubo.gg/api/v1/dubo/documentation/4db79fff-a5b0-497e-baea-099e6935ed05
   response:

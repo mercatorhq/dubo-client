@@ -28,8 +28,6 @@ interactions:
       - api.dubo.gg
       user-agent:
       - python-httpx/0.24.1
-      x-dubo-key:
-      - pk.test-api-key
     method: POST
     uri: https://test-api.dubo.gg/v1/dubo/chart?num_charts=1
   response:

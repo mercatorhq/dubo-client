@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: '{"sql_text": "SELECT * FROM p", "cursor_position": 14}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '54'
+      content-type:
+      - application/json
+      host:
+      - localhost:8080
+      user-agent:
+      - python-httpx/0.24.1
+    method: POST
+    uri: https://test-api.dubo.gg/api/v1/dubo/copilot-api
+  response:
+    content: '{"suggested_sql_text":"dbo.persons","full_sql_text":"SELECT * FROM dbo.persons"}'
+    headers:
+      content-length:
+      - '80'
+      content-type:
+      - application/json
+      date:
+      - Fri, 01 Mar 2024 02:39:58 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: '{"sql_text": "SELECT * FROM", "cursor_position": null}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '54'
+      content-type:
+      - application/json
+      host:
+      - localhost:8080
+      user-agent:
+      - python-httpx/0.24.1
+    method: POST
+    uri: https://test-api.dubo.gg/api/v1/dubo/copilot-api
+  response:
+    content: '{"suggested_sql_text":"cities;","full_sql_text":"SELECT * FROM cities;"}'
+    headers:
+      content-length:
+      - '72'
+      content-type:
+      - application/json
+      date:
+      - Fri, 01 Mar 2024 02:39:58 GMT
+      server:
+      - uvicorn
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
