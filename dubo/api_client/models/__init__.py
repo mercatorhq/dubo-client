@@ -19,6 +19,8 @@ from .matched_doc import MatchedDoc
 from .page_matched_doc import PageMatchedDoc
 from .query_response import QueryResponse
 from .query_status import QueryStatus
+from .sql_autocomplete_query import SqlAutocompleteQuery
+from .sql_autocomplete_response import SqlAutocompleteResponse
 from .table_column import TableColumn
 from .validation_error import ValidationError
 
@@ -42,6 +44,8 @@ __all__ = (
     "PageMatchedDoc",
     "QueryResponse",
     "QueryStatus",
+    "SqlAutocompleteQuery",
+    "SqlAutocompleteResponse",
     "TableColumn",
     "ValidationError",
 )

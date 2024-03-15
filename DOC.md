@@ -11,6 +11,7 @@
 * [get\_all\_docs](#ask_dubo.get_all_docs)
 * [update\_doc](#ask_dubo.update_doc)
 * [delete\_doc](#ask_dubo.delete_doc)
+* [autocomplete\_sql](#ask_dubo.autocomplete_sql)
 
 <a id="ask_dubo.ask"></a>
 
@@ -140,7 +141,9 @@ query("How many area types are there?")
 ## generate\_sql
 
 ```python
-def generate_sql(query_text: str, fast: bool = False) -> str
+def generate_sql(query_text: str,
+                 fast: bool = False,
+                 pretty: bool = True) -> str
 ```
 
 Ask Dubo to generate a SQL query.
@@ -403,5 +406,44 @@ from dubo import delete_doc
 delete_doc("c1d62c33-4561-4b5f-b2c2-e0203cee1f7b")
 
 # True
+```
+
+<a id="ask_dubo.autocomplete_sql"></a>
+
+## autocomplete\_sql
+
+```python
+def autocomplete_sql(
+        sql_query: str,
+        cursor_position: Optional[int] = None) -> AutocompleteSqlResult
+```
+
+Autocomplete a SQL query
+
+**Arguments**:
+
+- `sql_query`: The SQL query to autocomplete. The last character, or the character before the cursor, must be a whitespace
+- `cursor_position`: (optional) The position of the cursor in the SQL query from which the suggestion will start
+
+**Returns**:
+
+The suggested SQL query
+##### Example
+```python
+from dubo import autocomplete_sql
+
+autocomplete_sql("SELECT * ")
+
+# AutocompleteResult(
+#    sql_query_full="SELECT * FROM users",
+#    sql_query_suggested="FROM users"
+#)
+
+autocomplete_sql("SELECT *", 7)
+
+# AutocompleteResult(
+#    sql_query_full="SELECT * FROM users",
+#    sql_query_suggested="* FROM users"
+#)
 ```
 

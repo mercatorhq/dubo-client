@@ -14,7 +14,7 @@ from pydeck.io.html import deck_to_html
 
 from dubo.common import DuboException
 from dubo.config import BASE_API_URL, get_dubo_key
-from dubo.entities import DataResult
+from dubo.entities import DataResult, AutocompleteSqlResult
 from dubo.query_utils import dispatch_and_retrieve
 
 from dubo.api_client import AuthenticatedClient
@@ -23,6 +23,7 @@ from dubo.api_client.api.dubo import (
 )
 
 from dubo.api_client.api.enterprise import (
+    api_copilot_api_v1_dubo_copilot_api_post,
     ask_dispatch_api_v1_dubo_query_generate_post,
     create_documentation_api_v1_dubo_documentation_post,
     delete_document_by_id_api_v1_dubo_documentation_delete,
@@ -627,3 +628,64 @@ def delete_doc(data_source_documentation_id: str) -> bool:
         )
 
     return res.parsed
+
+
+def autocomplete_sql(
+    sql_query: str,
+    cursor_position: Optional[int] = None,
+) -> AutocompleteSqlResult:
+    """
+    Autocomplete a SQL query
+
+    :param sql_query: The SQL query to autocomplete. The last character, or the character before the cursor, must be a whitespace
+    :param cursor_position: (optional) The position of the cursor in the SQL query from which the suggestion will start
+    :return: The suggested SQL query
+
+    ##### Example
+    ```python
+    from dubo import autocomplete_sql
+
+    autocomplete_sql("SELECT * ")
+
+    # AutocompleteResult(
+    #    sql_query_full="SELECT * FROM users",
+    #    sql_query_suggested="FROM users"
+    #)
+
+    autocomplete_sql("SELECT *", 7)
+
+    # AutocompleteResult(
+    #    sql_query_full="SELECT * FROM users",
+    #    sql_query_suggested="* FROM users"
+    #)
+    ```
+    """
+
+    if cursor_position is not None and cursor_position != 0:
+        char_before_position = sql_query[cursor_position - 1]
+        if char_before_position != " ":
+            raise DuboException(
+                f"When a cursor position is set, the character before must be a whitespace"
+            )
+    elif cursor_position is None and sql_query[-1] != " ":
+        raise DuboException(
+            f"The last character must be a whitespace"
+        )
+
+
+    body = SqlAutocompleteQuery(sql_query, cursor_position)
+    res = api_copilot_api_v1_dubo_copilot_api_post.sync_detailed(
+        client=client,
+        json_body=body,
+    )
+    if res.status_code != HTTPStatus.OK:
+        raise DuboException(
+            f"Failed to call API, status code: {res.status_code}, content: {res.content.decode('utf-8')}"
+        )
+
+    res = res.parsed
+
+    return AutocompleteSqlResult(
+        sql_query_full=res.full_sql_text,
+        sql_query_suggested=res.suggested_sql_text,
+    )

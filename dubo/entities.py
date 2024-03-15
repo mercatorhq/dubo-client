@@ -20,3 +20,9 @@ class DataResult:
         ]:
             return False
         return True
+
+
+@dataclass
+class AutocompleteSqlResult:
+    sql_query_full: str
+    sql_query_suggested: str
