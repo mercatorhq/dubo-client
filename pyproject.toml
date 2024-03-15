@@ -2,7 +2,7 @@
 name = "dubo"
 version = "0.2.13"
 description = "Analytics made simple"
-authors = ["Andrew Duberstein <ajduberstein@gmail.com>", "Andrew Duberstein <duber@mercator.tech>"]
+authors = ["Ian Kinsey <ian@mercator.tech>"]
 license = "MIT"
 readme = "README.md"
 
